@@ -1,11 +1,20 @@
 <html>
 
 <head>
+      <script src="js/jquery.min.js"></script>
+
     <title>
         Welcome | TEXA Project
     </title>
     <script LANGUAGE="JavaScript">
+        AIName = "";
+        // $('#AIName').val(AIName);
         function validate_fileupload(form) {
+            while (AIName == "" || AIName == null) {
+                AIName = prompt("Enter the name of the AI", "");
+            }
+            alert("Name's settled: " + AIName);
+            $('#AIName').val(AIName);
             fileName = form.uploadfile.value;
             var allowed_extensions = new Array("js");
             var file_extension = fileName.split('.').pop(); // split function will split the filename by dot(.), and pop function will pop the last element from the array which will give you the extension as well. If there will be no extension then it will return the filename.
@@ -34,6 +43,7 @@
         <form enctype="multipart/form-data" action="/upload" method="post">
             <input type="file" name="uploadfile" />
             <input type="hidden" name="token" value="{{.}}" />
+            <input type="hidden" id="AIName" name="AIName" />
             <br/> <br/><input type="button" name="UploadButton" value="Upload" onClick="validate_fileupload(this.form)">
             <input type="reset" value="Reset">
         </form>

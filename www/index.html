@@ -8,6 +8,13 @@
 
 
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+
+    IntName = "";
+    while (IntName == "" || IntName == null) {
+      IntName = prompt("Interrogator Name:","");
+    }
+    alert("Welcome, "+IntName+"!");
+
     var eliza = new ElizaBot();
     var elizaLines = new Array();
 
@@ -86,12 +93,9 @@
         return false;
       }
       alert("ScoreArray: " + scoreArray);
-      // jsonString = JSON.stringify(scoreArray);
-      // $('#scoreArray').val(JSON.stringify(scoreArray));
 
       $('#scoreArray').val(scoreArray);
-      // alert("JSON: " + jsonString);
-      // document.getElementById("scoreArray").innerHTML = jsonString;
+      $('#IntName').val(IntName);
     }
   </SCRIPT>
 </HEAD>
@@ -129,6 +133,7 @@
   </CENTER>
   <FORM ACTION="/texa" NAME="e_score" method="POST">
     <input type="hidden" id="scoreArray" name="scoreArray">
+    <input type="hidden" id="IntName" name="IntName">    
     <!--<p id="scoreArray" name="scoreArray"></p>-->
     <input type="submit" value="Submit Score">
     <!--<input type="submit" value="Submit scores" onClick="downloadScore()">-->
