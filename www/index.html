@@ -8,12 +8,54 @@
 
 
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
-
     IntName = "";
     while (IntName == "" || IntName == null) {
-      IntName = prompt("Interrogator Name:","");
+      IntName = prompt("Interrogator Name:", "");
     }
-    alert("Welcome, "+IntName+"!");
+    alert("Welcome, " + IntName + "!");
+
+    SlabNum = "";
+    while (SlabNum == "" || SlabNum == null || SlabNum == 0) {
+      SlabNum = prompt("Enter number of Slabs:", "");
+    }
+    alert("Slab Count: " + SlabNum)
+
+    var SlabName = new Array();
+    SlabName.length = SlabNum;
+    for (var i = 0; i < SlabName.length; i++) {
+      while (SlabName[i] == "" || SlabName[i] == null) {
+        SlabName[i] = prompt("Enter the Name of " + i + "th Slab:")
+      }
+    }
+    for (var i = 0; i < SlabName.length; i++) {
+      alert(i + "th Slab Name: " + SlabName[i])
+    }
+
+    var radio_home = "";
+    function genrateSlabButtons() {
+
+      if (radio_home != "" && SlabName != "") {
+        for (var i = 0; i < SlabName.length; i++) {
+          var slabButton = makeRadioButton("SlabButtons", SlabName[i], i, SlabName[i])
+          radio_home.appendChild(slabButton)
+        }
+        document.getElementById(SlabName[0]).checked = true
+      }
+    }
+
+    function makeRadioButton(name, id, value, text) {
+      var label = document.createElement("label");
+      var radio = document.createElement("input");
+      radio.type = "radio";
+      radio.name = name;
+      radio.value = value;
+      radio.id = id;
+
+      label.appendChild(radio);
+
+      label.appendChild(document.createTextNode(text));
+      return label;
+    }
 
     var eliza = new ElizaBot();
     var elizaLines = new Array();
@@ -22,8 +64,8 @@
     var displayRows = 20;
 
     var scoreArray = [];
-    // var counter = scoreArray.length;
     var jsonString = "";
+    var slabSequence = [];
 
     // elizaReset() resets all forms and associated values
     function elizaReset() {
@@ -70,32 +112,55 @@
       f.e_input.focus();
     }
 
+    function validateSlabButtons() {
+      // if (radio_home != "" && SlabName != "") {
+        for (var i = 0; i < SlabName.length; i++) {
+          if (document.getElementById(SlabName[i]).checked == true) {
+            return true
+          }
+        }
+      // }
+      return false
+    }
+
+    function getSlabValue() {
+      if (radio_home != "" && SlabName != "") {
+        for (var i = 0; i < SlabName.length; i++) {
+          if (document.getElementById(SlabName[i]).checked == true) {
+            return SlabName[i]
+          }
+        }
+      }
+    }
+
     // collectScore() collects the quantum score for each transaction
     function collectScore() {
       var f = document.forms.e_form;
       var score = f.gender.value;
       var counter = scoreArray.length;
 
-      // if ((score == null) && (f.e_input.value == null)) {
-      // }
-
       if ((score != null) && (f.e_input.value != '')) {
-        if ((score == 0) || (score == 1)) {
+        if (((score == 0) || (score == 1)) && (validateSlabButtons() == true)) {
           scoreArray[counter] = score;
+          slabSequence[counter] = getSlabValue();
           counter = counter + 1;
         }
         else {
-          alert("Please choose your score: 0 or 1");
+          alert("Please choose your score: 0 or 1.\nPlease choose a Slab.");
         }
       }
       else {
         alert("Please enter data.");
         return false;
       }
-      alert("ScoreArray: " + scoreArray);
 
+      alert("ScoreArray: " + scoreArray);
+      alert("SlabSequence: " + slabSequence);
+
+      $('#slabSequence').val(slabSequence);
       $('#scoreArray').val(scoreArray);
       $('#IntName').val(IntName);
+      $('#SlabName').val(SlabName);
     }
   </SCRIPT>
 </HEAD>
@@ -115,12 +180,16 @@
         </TR>
         <TR VALIGN="middle">
           <TD>
-            <p></p>
+            <div id="radio_home" name="radio_home">Slab Options:</div>
             Quantum Score:
             <INPUT TYPE="radio" NAME="gender" value="0" checked>0
             <INPUT TYPE="radio" NAME="gender" value="1">1
             <br/><br/>Dialog Input:
             <INPUT TYPE="text" NAME="e_input" SIZE="50">
+            <script>
+              radio_home = document.getElementById("radio_home")
+              genrateSlabButtons()
+            </script>
           </TD>
           <TD ALIGN="right">
             <INPUT TYPE="submit" VALUE="&nbsp;Talk&nbsp;" onclick="collectScore()">
@@ -133,10 +202,10 @@
   </CENTER>
   <FORM ACTION="/texa" NAME="e_score" method="POST">
     <input type="hidden" id="scoreArray" name="scoreArray">
-    <input type="hidden" id="IntName" name="IntName">    
-    <!--<p id="scoreArray" name="scoreArray"></p>-->
+    <input type="hidden" id="IntName" name="IntName">
+    <input type="hidden" id="SlabName" name="SlabName">
+    <input type="hidden" id="slabSequence" name="slabSequence">
     <input type="submit" value="Submit Score">
-    <!--<input type="submit" value="Submit scores" onClick="downloadScore()">-->
   </FORM>
 </BODY>
 

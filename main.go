@@ -2,79 +2,24 @@ package main
 
 import (
 	"crypto/md5"
-	"encoding/json"
+
 	"fmt"
 	"html/template"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"regexp"
 	"strconv"
 	"time"
 	//Import this by exec in CLI: `go get -u github.com/TexaProject/texalib`
+	"github.com/TexaProject/texajson"
 	"github.com/TexaProject/texalib"
 )
 
-type Page struct {
-	AIName   string  `json:"AIName"`
-	IntName  string  `json:"IntName"`
-	ArtiMts  float64 `json:"ArtiMts"`
-	HumanMts float64 `json:"HumanMts"`
-}
-
-func (p Page) toString() string {
-	return toJson(p)
-}
-
-//getPages() returns a converted Page Array persistent to the mts.json
-func getPages() []Page {
-	raw, err := ioutil.ReadFile("./www/data/mts.json")
-	if err != nil {
-		fmt.Println(err.Error())
-		os.Exit(1)
-	}
-
-	var c []Page
-	json.Unmarshal(raw, &c)
-	return c
-}
-
-// convtoPage converts a set of data vars into a Page struct variable
-func convtoPage(AIName string, IntName string, ArtiMts float64, HumanMts float64) Page {
-	var newPage Page
-	newPage.AIName = AIName
-	newPage.IntName = IntName
-	newPage.ArtiMts = ArtiMts
-	newPage.HumanMts = HumanMts
-	return newPage
-}
-
-// AddtoPageArray() Appends a new page 'p' to the specified target PageArray 'pa'
-func AddtoPageArray(p Page, pa []Page) []Page {
-	for x := range pa {
-		if p == pa[x] {
-			panic("JSON ERROR: Can't append a Duplicate Page into PageArray")
-		}
-	}
-	return (append(pa, p))
-}
-
-// toJSON Marshals PageArray data into JSON format
-func toJson(p interface{}) string {
-	bytes, err := json.Marshal(p)
-	if err != nil {
-		fmt.Println(err.Error())
-		os.Exit(1)
-	}
-	ioutil.WriteFile("./www/data/mts.json", bytes, 0644)
-	return string(bytes)
-}
-
-// AIName exports form value from /welcome
+// AIName exports form value from /welcome globally
 var AIName string
 
-// IntName exports form value from /texa
+// IntName exports form value from /texa globally
 var IntName string
 
 func rootHandler(w http.ResponseWriter, r *http.Request) {
@@ -92,54 +37,88 @@ func texaHandler(w http.ResponseWriter, r *http.Request) {
 
 		fmt.Println("--INTERROGATION FORM DATA--")
 		IntName = r.Form.Get("IntName")
+		QSA := r.Form.Get("scoreArray")
+		SlabName := r.Form.Get("SlabName")
+		slabSequence := r.Form.Get("slabSequence")
 
 		fmt.Println("###", AIName)
 		fmt.Println("###", IntName)
+		fmt.Println("###", QSA)
+		fmt.Println("###", SlabName)
+		fmt.Println("###", slabSequence)
 
-		QSA := r.Form.Get("scoreArray")
-		fmt.Println(QSA)
-
+		// LOGIC
 		re := regexp.MustCompile("[0-1]+")
-
 		array := re.FindAllString(QSA, -1)
 
-		fmt.Println("Resulting Array:")
+		SlabNameArray := regexp.MustCompile("[,]").Split(SlabName, -1)
+		slabSeqArray := regexp.MustCompile("[,]").Split(slabSequence, -1)
+
+		fmt.Println("###Resulting Array:")
 		for x := range array {
 			fmt.Println(array[x])
 		}
 
+		fmt.Println("###SlabNameArray: ")
+		fmt.Println(SlabNameArray)
+
+		fmt.Println("###slabSeqArray: ")
+		fmt.Println(slabSeqArray)
+
 		ArtiQSA := texalib.Convert(array)
-		fmt.Println("ArtiQSA:")
+		fmt.Println("###ArtiQSA:")
 		fmt.Println(ArtiQSA)
 
 		HumanQSA := texalib.SetHumanQSA(ArtiQSA)
-		fmt.Println("HumanQSA:")
+		fmt.Println("###HumanQSA:")
 		fmt.Println(HumanQSA)
 
 		TSA := texalib.GetTransactionSeries(ArtiQSA, HumanQSA)
-		fmt.Println("TSA:")
+		fmt.Println("###TSA:")
 		fmt.Println(TSA)
 
 		ArtiMts := texalib.GetMeanTestScore(ArtiQSA)
 		HumanMts := texalib.GetMeanTestScore(HumanQSA)
 
-		fmt.Println("ArtiMts: ", ArtiMts)
-		fmt.Println("HumanMts: ", HumanMts)
+		fmt.Println("###ArtiMts: ", ArtiMts)
+		fmt.Println("###HumanMts: ", HumanMts)
 
-		PageArray := getPages()
+		PageArray := texajson.GetPages()
+		fmt.Println("###PageArray")
 		fmt.Println(PageArray)
 		for _, p := range PageArray {
 			fmt.Println(p)
 		}
 
-		newPage := convtoPage(AIName, IntName, ArtiMts, HumanMts)
+		newPage := texajson.ConvtoPage(AIName, IntName, ArtiMts, HumanMts)
 
-		PageArray = AddtoPageArray(newPage, PageArray)
+		PageArray = texajson.AddtoPageArray(newPage, PageArray)
+		fmt.Println("###AddedPageArray")
 		fmt.Println(PageArray)
 
-		jsonPageArray := toJson(PageArray)
-		fmt.Println("jsonPageArray:")
-		fmt.Println(jsonPageArray)
+		JsonPageArray := texajson.ToJson(PageArray)
+		fmt.Println("###jsonPageArray:")
+		fmt.Println(JsonPageArray)
+
+		////
+		fmt.Println("### SLAB LOGIC")
+
+		slabPageArray := texajson.GetSlabPages()
+		fmt.Println("###slabPageArray")
+		fmt.Println(slabPageArray)
+
+		slabPages := texajson.ConvtoSlabPage(ArtiQSA, SlabNameArray, slabSeqArray)
+		fmt.Println("###slabPages")
+		fmt.Println(slabPages)
+		for z := 0; z < len(slabPages); z++ {
+			slabPageArray = texajson.AddtoSlabPageArray(slabPages[z], slabPageArray)
+		}
+		fmt.Println("###finalslabPageArray")
+		fmt.Println(slabPageArray)
+
+		JsonSlabPageArray := texajson.SlabToJson(slabPageArray)
+		fmt.Println("###JsonSlabPageArray: ")
+		fmt.Println(JsonSlabPageArray)
 	}
 }
 
@@ -153,7 +132,7 @@ func welcomeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// upload logic for JS dictionary/bot data file
+// upload logic
 func uploadHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("method:", r.Method)
 	if r.Method == "GET" {
