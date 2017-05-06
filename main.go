@@ -119,6 +119,28 @@ func texaHandler(w http.ResponseWriter, r *http.Request) {
 		JsonSlabPageArray := texajson.SlabToJson(slabPageArray)
 		fmt.Println("###JsonSlabPageArray: ")
 		fmt.Println(JsonSlabPageArray)
+
+		////
+		fmt.Println("### CAT LOGIC")
+
+		CatPageArray := texajson.GetCatPages()
+		fmt.Println("###CatPageArray")
+		fmt.Println(CatPageArray)
+
+		CatPages := texajson.ConvtoCatPage(AIName, slabPageArray, SlabNameArray)
+		fmt.Println("###CatPages")
+		fmt.Println(CatPages)
+		CatPageArray = texajson.AddtoCatPageArray(CatPages, CatPageArray)
+
+		// for z := 0; z < len(CatPages); z++ {
+		// 	CatPageArray = texajson.AddtoCatPageArray(CatPages[z], CatPageArray)
+		// }
+		fmt.Println("###finalCatPageArray")
+		fmt.Println(CatPageArray)
+
+		JsonCatPageArray := texajson.SlabToJson(CatPageArray)
+		fmt.Println("###JsonCatPageArray: ")
+		fmt.Println(JsonCatPageArray)
 	}
 }
 
