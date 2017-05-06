@@ -138,7 +138,7 @@ func texaHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("###finalCatPageArray")
 		fmt.Println(CatPageArray)
 
-		JsonCatPageArray := texajson.SlabToJson(CatPageArray)
+		JsonCatPageArray := texajson.CatToJson(CatPageArray)
 		fmt.Println("###JsonCatPageArray: ")
 		fmt.Println(JsonCatPageArray)
 	}
