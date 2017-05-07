@@ -1,0 +1,68 @@
+<HTML>
+
+<head>
+    <title>Results | TEXA Project</title>
+    <style>
+        table {
+            border: 1px solid #666;
+            width: 100%;
+        }
+
+        th {
+            background: #f8f8f8;
+            font-weight: bold;
+            padding: 1px;
+        }
+
+        tr th {
+            background-color: palegoldenrod;
+        }
+    </style>
+    <script src="js/jquery.min.js"></script>
+    <script>
+        var data = '';
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.status == 200 && xmlhttp.readyState == 4) {
+                // data = xmlhttp.responseText;
+                data = JSON.parse(xmlhttp.responseText)
+            }
+        };
+        xmlhttp.open("GET", "http://localhost:3030/data/cat.json", true);
+        xmlhttp.send();
+        // data = JSON.parse(data)
+        alert("Received Data from CAT.JSON", data);
+
+        // drawTable(data);
+        function drawTable(data) {
+            for (var i = 0; i < data.length; i++) {
+                drawRow(data[i]);
+            }
+        }
+
+        function drawRow(rowData) {
+            var row = $("<tr />")
+            $("#personDataTable").append(row); //this will append tr element to table... keep its reference for a while since we will add cells into it
+            row.append($("<td>" + rowData.AIName + "</td>"));
+            for (var i in rowData.CatVal) {
+                row.append($("<td>" + "Slab: " + rowData.CatVal[i].CatName + "<br />" + "Spf:" + rowData.CatVal[i].Spf +
+                    "</td>"));
+            }
+        }
+    </script>
+</head>
+
+<body onload="drawTable(data)">
+    <center>
+        <h1>TEXA Results</h1>
+    </center>
+    <table id="personDataTable" border="1">
+        <tr>
+            <th>AIName</th>
+            <th>CatVal ...</th>
+        </tr>
+    </table>
+
+</body>
+
+</HTML>

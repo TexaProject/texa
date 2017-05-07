@@ -1,0 +1,212 @@
+<HTML>
+
+<HEAD>
+  <TITLE>Interrogation | TEXA Project</TITLE>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="js/elizabot.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="js/elizadata.js"></SCRIPT>
+  <script src="js/jquery.min.js"></script>
+
+
+  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+    IntName = "";
+    while (IntName == "" || IntName == null) {
+      IntName = prompt("Interrogator Name:", "");
+    }
+    alert("Welcome, " + IntName + "!");
+
+    SlabNum = "";
+    while (SlabNum == "" || SlabNum == null || SlabNum == 0) {
+      SlabNum = prompt("Enter number of Slabs:", "");
+    }
+    alert("Slab Count: " + SlabNum)
+
+    var SlabName = new Array();
+    SlabName.length = SlabNum;
+    for (var i = 0; i < SlabName.length; i++) {
+      while (SlabName[i] == "" || SlabName[i] == null) {
+        SlabName[i] = prompt("Enter the Name of " + i + "th Slab:")
+      }
+    }
+    for (var i = 0; i < SlabName.length; i++) {
+      alert(i + "th Slab Name: " + SlabName[i])
+    }
+
+    var radio_home = "";
+    function genrateSlabButtons() {
+
+      if (radio_home != "" && SlabName != "") {
+        for (var i = 0; i < SlabName.length; i++) {
+          var slabButton = makeRadioButton("SlabButtons", SlabName[i], i, SlabName[i])
+          radio_home.appendChild(slabButton)
+        }
+        document.getElementById(SlabName[0]).checked = true
+      }
+    }
+
+    function makeRadioButton(name, id, value, text) {
+      var label = document.createElement("label");
+      var radio = document.createElement("input");
+      radio.type = "radio";
+      radio.name = name;
+      radio.value = value;
+      radio.id = id;
+
+      label.appendChild(radio);
+
+      label.appendChild(document.createTextNode(text));
+      return label;
+    }
+
+    var eliza = new ElizaBot();
+    var elizaLines = new Array();
+
+    var displayCols = 60;
+    var displayRows = 20;
+
+    var scoreArray = [];
+    var jsonString = "";
+    var slabSequence = [];
+
+    // elizaReset() resets all forms and associated values
+    function elizaReset() {
+      eliza.reset();
+      elizaLines.length = 0;
+      elizaStep();
+      while (scoreArray.length > 0) { scoreArray.pop(); }
+    }
+
+    // elizaStep() performs the State Machine transition for interrogation
+    function elizaStep() {
+      var f = document.forms.e_form;
+      var userinput = f.e_input.value;
+      if (eliza.quit) {
+        f.e_input.value = '';
+        if (confirm("This session is over.\nStart over?")) elizaReset();
+        f.e_input.focus();
+        return;
+      }
+      else if (userinput != '') {
+        var usr = 'YOU:   ' + userinput;
+        var rpl = 'ELIZA: ' + eliza.transform(userinput);
+        elizaLines.push(usr);
+        elizaLines.push(rpl);
+        // display nicely
+        // (fit to textarea with last line free - reserved for extra line caused by word wrap)
+        var temp = new Array();
+        var l = 0;
+        for (var i = elizaLines.length - 1; i >= 0; i--) {
+          l += 1 + Math.floor(elizaLines[i].length / displayCols);
+          if (l >= displayRows) break
+          else temp.push(elizaLines[i]);
+        }
+        elizaLines = temp.reverse();
+        f.e_display.value = elizaLines.join('\n');
+      }
+      else if (elizaLines.length == 0) {
+        // no input and no saved lines -> output initial
+        var initial = 'ELIZA: ' + eliza.getInitial();
+        elizaLines.push(initial);
+        f.e_display.value = initial + '\n';
+      }
+      f.e_input.value = '';
+      f.e_input.focus();
+    }
+
+    function validateSlabButtons() {
+      // if (radio_home != "" && SlabName != "") {
+        for (var i = 0; i < SlabName.length; i++) {
+          if (document.getElementById(SlabName[i]).checked == true) {
+            return true
+          }
+        }
+      // }
+      return false
+    }
+
+    function getSlabValue() {
+      if (radio_home != "" && SlabName != "") {
+        for (var i = 0; i < SlabName.length; i++) {
+          if (document.getElementById(SlabName[i]).checked == true) {
+            return SlabName[i]
+          }
+        }
+      }
+    }
+
+    // collectScore() collects the quantum score for each transaction
+    function collectScore() {
+      var f = document.forms.e_form;
+      var score = f.gender.value;
+      var counter = scoreArray.length;
+
+      if ((score != null) && (f.e_input.value != '')) {
+        if (((score == 0) || (score == 1)) && (validateSlabButtons() == true)) {
+          scoreArray[counter] = score;
+          slabSequence[counter] = getSlabValue();
+          counter = counter + 1;
+        }
+        else {
+          alert("Please choose your score: 0 or 1.\nPlease choose a Slab.");
+        }
+      }
+      else {
+        alert("Please enter data.");
+        return false;
+      }
+
+      alert("ScoreArray: " + scoreArray);
+      alert("SlabSequence: " + slabSequence);
+
+      $('#slabSequence').val(slabSequence);
+      $('#scoreArray').val(scoreArray);
+      $('#IntName').val(IntName);
+      $('#SlabName').val(SlabName);
+    }
+  </SCRIPT>
+</HEAD>
+
+<BODY TOPMARGIN="0" LEFTMARGIN="0" RIGHTMARGIN="0" BOTTOMMARGIN="0" MARGINHEIGHT="0" MARGINWIDTH="0" STYLE="border:0" onload="window.setTimeout('elizaReset()',100)">
+  <A NAME="top"></A>
+
+  <CENTER>
+    <P>&nbsp;</P>
+    <H3>TEXA Interrogation</H3>
+    <TABLE BORDER="0" CELLSPACING="10" CELLPADDING="0">
+      <FORM NAME="e_form" onsubmit="elizaStep();return false">
+        <TR>
+          <TD COLSPAN="2">
+            <TEXTAREA readonly NAME="e_display" COLS="60" ROWS="20"></TEXTAREA>
+          </TD>
+        </TR>
+        <TR VALIGN="middle">
+          <TD>
+            <div id="radio_home" name="radio_home">Slab Options:</div>
+            Quantum Score:
+            <INPUT TYPE="radio" NAME="gender" value="0" checked>0
+            <INPUT TYPE="radio" NAME="gender" value="1">1
+            <br/><br/>Dialog Input:
+            <INPUT TYPE="text" NAME="e_input" SIZE="50">
+            <script>
+              radio_home = document.getElementById("radio_home")
+              genrateSlabButtons()
+            </script>
+          </TD>
+          <TD ALIGN="right">
+            <INPUT TYPE="submit" VALUE="&nbsp;Talk&nbsp;" onclick="collectScore()">
+            <br/><br/>
+            <INPUT TYPE="reset" VALUE="Reset" onClick="window.setTimeout('elizaReset()',100)">
+          </TD>
+        </TR>
+      </FORM>
+    </TABLE>
+  </CENTER>
+  <FORM ACTION="/texa" NAME="e_score" method="POST">
+    <input type="hidden" id="scoreArray" name="scoreArray">
+    <input type="hidden" id="IntName" name="IntName">
+    <input type="hidden" id="SlabName" name="SlabName">
+    <input type="hidden" id="slabSequence" name="slabSequence">
+    <input type="submit" value="Submit Score">
+  </FORM>
+</BODY>
+
+</HTML>
