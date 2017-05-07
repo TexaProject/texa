@@ -192,7 +192,13 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func resultHandler(w http.ResponseWriter, r *http.Request) {
-
+	fmt.Println("method:", r.Method) //get	request	method
+	if r.Method == "GET" {
+		t, _ := template.ParseFiles("www/result.html")
+		t.Execute(w, nil)
+	} else {
+		r.ParseForm()
+	}
 }
 
 func main() {
@@ -200,8 +206,10 @@ func main() {
 	fmt.Println("STATUS: INITIATED")
 	fmt.Println("ADDR: http://127.0.0.1:3030")
 
-	fs := http.FileServer(http.Dir("www/js"))
-	http.Handle("/js/", http.StripPrefix("/js/", fs))
+	fsj := http.FileServer(http.Dir("www/js"))
+	http.Handle("/js/", http.StripPrefix("/js/", fsj))
+	fsd := http.FileServer(http.Dir("www/data"))
+	http.Handle("/data/", http.StripPrefix("/data/", fsd))
 
 	http.HandleFunc("/", rootHandler)
 	http.HandleFunc("/welcome", welcomeHandler)
