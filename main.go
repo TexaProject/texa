@@ -172,12 +172,14 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 			fmt.Println(err)
 			return
 		}
+		handler.Filename = "elizadata.js"
 		AIName = r.FormValue("AIName")
 		fmt.Println(AIName)
 		defer file.Close()
 
 		fmt.Fprint(w, "ACKNOWLEDGEMENT:\nUploaded the file. Header Info:\n")
 		fmt.Fprintf(w, "%v", handler.Header)
+		fmt.Fprintf(w, "\nSaved As: www/js/"+handler.Filename)
 		fmt.Fprint(w, "\n\nVISIT: /texa for interrogation.")
 		f, err := os.OpenFile("./www/js/"+handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
 		if err != nil {
