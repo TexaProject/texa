@@ -20,6 +20,13 @@
     </style>
     <script src="js/jquery.min.js"></script>
     <script>
+        function start(){
+            drawTable(data);
+            mtsdrawTable(mdata);
+        }
+        window.onload = start;
+    </script>
+    <script>
         var data = '';
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function () {
@@ -38,31 +45,71 @@
             for (var i = 0; i < data.length; i++) {
                 drawRow(data[i]);
             }
+            return;
         }
 
         function drawRow(rowData) {
             var row = $("<tr />")
-            $("#personDataTable").append(row); //this will append tr element to table... keep its reference for a while since we will add cells into it
+            $("#catDataTable").append(row); //this will append tr element to table... keep its reference for a while since we will add cells into it
             row.append($("<td>" + rowData.AIName + "</td>"));
             for (var i in rowData.CatVal) {
-                row.append($("<td>" + "Slab: " + rowData.CatVal[i].CatName + "<br />" + "Spf:" + rowData.CatVal[i].Spf +
+                row.append($("<td>" + "Slab : " + rowData.CatVal[i].CatName + "<br />" + "SPF : " + rowData.CatVal[i].Spf +
                     "</td>"));
             }
         }
     </script>
+    <script>
+        var mdata = '';
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.status == 200 && xmlhttp.readyState == 4) {
+                // data = xmlhttp.responseText;
+                mdata = JSON.parse(xmlhttp.responseText)
+            }
+        };
+        xmlhttp.open("GET", "http://localhost:3030/data/mts.json", true);
+        xmlhttp.send();
+        // data = JSON.parse(data)
+        alert("Received Data from MTS.JSON", mdata);
+
+        // drawTable(data);
+        function mtsdrawTable(mdata) {
+            for (var i = 0; i < mdata.length; i++) {
+                mtsdrawRow(mdata[i]);
+            }
+            return;
+        }
+
+        function mtsdrawRow(rowData) {
+            var row = $("<tr />")
+            $("#mtsDataTable").append(row); //this will append tr element to table... keep its reference for a while since we will add cells into it
+            row.append($("<td>" + rowData.AIName + "</td>"));
+
+            // for (var i in rowData.CatVal) {
+                row.append($("<td>" + "IntName : " + rowData.IntName + "<br />" + "MTS(AI) : " + rowData.ArtiMts + "<br />" + "MTS(HI) : " + rowData.HumanMts +
+                    "</td>"));
+            // }
+        }
+    </script>
 </head>
 
-<body onload="drawTable(data)">
+<body>
     <center>
         <h1>TEXA Results</h1>
     </center>
-    <table id="personDataTable" border="1">
+    <table id="catDataTable" border="1">
         <tr>
             <th>AIName</th>
             <th>CatVal ...</th>
         </tr>
     </table>
-
+    <br/><br/>
+    <table id="mtsDataTable" border="1">
+        <tr>
+            <th>AIName</th>
+            <th>Int Name</th>
+        </tr>
+    </table>
 </body>
 
 </HTML>
