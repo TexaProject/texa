@@ -1,1 +1,2 @@
-/www/data/**/*.json
+www/data/**/*.json
+debug
