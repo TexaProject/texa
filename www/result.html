@@ -20,13 +20,6 @@
     </style>
     <script src="js/jquery.min.js"></script>
     <script>
-        function start(){
-            drawTable(data);
-            mtsdrawTable(mdata);
-        }
-        window.onload = start;
-    </script>
-    <script>
         var data = '';
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function () {
@@ -60,15 +53,15 @@
     </script>
     <script>
         var mdata = '';
-        var xmlhttp = new XMLHttpRequest();
-        xmlhttp.onreadystatechange = function () {
-            if (xmlhttp.status == 200 && xmlhttp.readyState == 4) {
+        var mxmlhttp = new XMLHttpRequest();
+        mxmlhttp.onreadystatechange = function () {
+            if (mxmlhttp.status == 200 && mxmlhttp.readyState == 4) {
                 // data = xmlhttp.responseText;
-                mdata = JSON.parse(xmlhttp.responseText)
+                mdata = JSON.parse(mxmlhttp.responseText)
             }
         };
-        xmlhttp.open("GET", "http://localhost:3030/data/mts.json", true);
-        xmlhttp.send();
+        mxmlhttp.open("GET", "http://localhost:3030/data/mts.json", true);
+        mxmlhttp.send();
         // data = JSON.parse(data)
         alert("Received Data from MTS.JSON", mdata);
 
@@ -90,6 +83,13 @@
                     "</td>"));
             // }
         }
+    </script>
+    <script>
+        function start(){
+            drawTable(data);
+            mtsdrawTable(mdata);
+        }
+        window.onload = start;
     </script>
 </head>
 
