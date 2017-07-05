@@ -5,7 +5,7 @@
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="js/elizabot.js"></SCRIPT>
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript" SRC="js/elizadata.js"></SCRIPT>
   <script src="js/jquery.min.js"></script>
-
+  <link rel="stylesheet" href="http://localhost:3030/css/bootstrap.min.css">
 
   <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
     IntName = "";
@@ -32,6 +32,7 @@
     }
 
     var radio_home = "";
+
     function genrateSlabButtons() {
 
       if (radio_home != "" && SlabName != "") {
@@ -72,7 +73,9 @@
       eliza.reset();
       elizaLines.length = 0;
       elizaStep();
-      while (scoreArray.length > 0) { scoreArray.pop(); }
+      while (scoreArray.length > 0) {
+        scoreArray.pop();
+      }
     }
 
     // elizaStep() performs the State Machine transition for interrogation
@@ -84,8 +87,7 @@
         if (confirm("This session is over.\nStart over?")) elizaReset();
         f.e_input.focus();
         return;
-      }
-      else if (userinput != '') {
+      } else if (userinput != '') {
         var usr = 'YOU:   ' + userinput;
         var rpl = 'ELIZA: ' + eliza.transform(userinput);
         elizaLines.push(usr);
@@ -101,8 +103,7 @@
         }
         elizaLines = temp.reverse();
         f.e_display.value = elizaLines.join('\n');
-      }
-      else if (elizaLines.length == 0) {
+      } else if (elizaLines.length == 0) {
         // no input and no saved lines -> output initial
         var initial = 'ELIZA: ' + eliza.getInitial();
         elizaLines.push(initial);
@@ -114,11 +115,11 @@
 
     function validateSlabButtons() {
       // if (radio_home != "" && SlabName != "") {
-        for (var i = 0; i < SlabName.length; i++) {
-          if (document.getElementById(SlabName[i]).checked == true) {
-            return true
-          }
+      for (var i = 0; i < SlabName.length; i++) {
+        if (document.getElementById(SlabName[i]).checked == true) {
+          return true
         }
+      }
       // }
       return false
     }
@@ -144,12 +145,10 @@
           scoreArray[counter] = score;
           slabSequence[counter] = getSlabValue();
           counter = counter + 1;
-        }
-        else {
+        } else {
           alert("Please choose your score: 0 or 1.\nPlease choose a Slab.");
         }
-      }
-      else {
+      } else {
         alert("Please enter data.");
         return false;
       }
@@ -175,7 +174,7 @@
       <FORM NAME="e_form" onsubmit="elizaStep();return false">
         <TR>
           <TD COLSPAN="2">
-            <TEXTAREA readonly NAME="e_display" COLS="60" ROWS="20"></TEXTAREA>
+            <TEXTAREA readonly NAME="e_display" COLS="80" ROWS="20"></TEXTAREA>
           </TD>
         </TR>
         <TR VALIGN="middle">
@@ -205,7 +204,7 @@
     <input type="hidden" id="IntName" name="IntName">
     <input type="hidden" id="SlabName" name="SlabName">
     <input type="hidden" id="slabSequence" name="slabSequence">
-    <input type="submit" value="Submit Score">
+    <br />><center><input type="submit" value="Submit Score"></center>
   </FORM>
 </BODY>
 

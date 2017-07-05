@@ -34,6 +34,9 @@ func texaHandler(w http.ResponseWriter, r *http.Request) {
 	} else {
 		r.ParseForm()
 		// fmt.Printf("%+v\n", r.Form)
+		fmt.Fprint(w, "<html><head><link rel=\"stylesheet\" href=\"http://localhost:3030/css/bootstrap.min.css\"><title>File Ack | TEXA Project</title></head><body>ACKNOWLEDGEMENT: Received the scores. <br /><br />Info:<br />")
+		fmt.Fprint(w, "<br /><br />VISIT: /result for interrogation.")
+		fmt.Fprintf(w, "<br /><br /><input type=\"button\" class=\"btn info\" onclick=\"location.href='http://localhost:3030/result';\" value=\"Visit /result\" /></body></html>")
 
 		fmt.Println("--INTERROGATION FORM DATA--")
 		IntName = r.Form.Get("IntName")
@@ -172,13 +175,16 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 			fmt.Println(err)
 			return
 		}
+		handler.Filename = "elizadata.js"
 		AIName = r.FormValue("AIName")
 		fmt.Println(AIName)
 		defer file.Close()
 
-		fmt.Fprint(w, "ACKNOWLEDGEMENT:\nUploaded the file. Header Info:\n")
+		fmt.Fprint(w, "<html><head><link rel=\"stylesheet\" href=\"http://localhost:3030/css/bootstrap.min.css\"><title>File Ack | TEXA Project</title></head><body>ACKNOWLEDGEMENT: Uploaded the file. <br /><br />Header Info:<br />")
 		fmt.Fprintf(w, "%v", handler.Header)
-		fmt.Fprint(w, "\n\nVISIT: /texa for interrogation.")
+		fmt.Fprintf(w, "<br /><br />Saved As: www/js/"+handler.Filename)
+		fmt.Fprint(w, "<br /><br />VISIT: /texa for interrogation.")
+		fmt.Fprintf(w, "<br /><br /><input type=\"button\" class=\"btn info\" onclick=\"location.href='http://localhost:3030/texa';\" value=\"Visit /texa\" /></body></html>")
 		f, err := os.OpenFile("./www/js/"+handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
 		if err != nil {
 			fmt.Println(err)
@@ -206,6 +212,8 @@ func main() {
 	fmt.Println("STATUS: INITIATED")
 	fmt.Println("ADDR: http://127.0.0.1:3030")
 
+	fsc := http.FileServer(http.Dir("www/css"))
+	http.Handle("/css/", http.StripPrefix("/css/", fsc))
 	fsj := http.FileServer(http.Dir("www/js"))
 	http.Handle("/js/", http.StripPrefix("/js/", fsj))
 	fsd := http.FileServer(http.Dir("www/data"))
