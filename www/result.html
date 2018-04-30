@@ -29,7 +29,7 @@
                 data = JSON.parse(xmlhttp.responseText)
             }
         };
-        xmlhttp.open("GET", "http://localhost:3030/data/cat.json", true);
+        xmlhttp.open("GET", "http://localhost:3030/cat", true);
         xmlhttp.send();
         // data = JSON.parse(data)
         alert("Received Data from CAT.JSON", data);
@@ -61,7 +61,7 @@
                 mdata = JSON.parse(mxmlhttp.responseText)
             }
         };
-        mxmlhttp.open("GET", "http://localhost:3030/data/mts.json", true);
+        mxmlhttp.open("GET", "http://localhost:3030/mts", true);
         mxmlhttp.send();
         // data = JSON.parse(data)
         alert("Received Data from MTS.JSON", mdata);
