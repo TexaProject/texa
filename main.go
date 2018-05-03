@@ -13,7 +13,7 @@ import (
 	"strconv"
 	"time"
 	//Import this by exec in CLI: `go get -u github.com/TexaProject/texalib`
-	"github.com/Harsh0/texajson"
+	"github.com/TexaProject/texajson"
 	"github.com/TexaProject/texalib"
 )
 
