@@ -2,6 +2,7 @@ package main
 
 import (
 	"crypto/md5"
+	"encoding/json"
 
 	"fmt"
 	"html/template"
@@ -207,6 +208,45 @@ func resultHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func getCatJSON(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("method:", r.Method) //get	request	method
+	catPages := texajson.GetCatPages()
+	bs, err := json.Marshal(catPages)
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(bs)
+}
+
+func getMtsJSON(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("method:", r.Method) //get	request	method
+	mtsPage := texajson.GetPages()
+	bs, err := json.Marshal(mtsPage)
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(bs)
+}
+
+func getSlabJSON(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("method:", r.Method) //get	request	method
+	slabPages := texajson.GetSlabPages()
+	bs, err := json.Marshal(slabPages)
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(bs)
+}
+
 func main() {
 	fmt.Println("--TEXA SERVER--")
 	fmt.Println("STATUS: INITIATED")
@@ -224,6 +264,9 @@ func main() {
 	http.HandleFunc("/upload", uploadHandler)
 	http.HandleFunc("/texa", texaHandler)
 	http.HandleFunc("/result", resultHandler)
+	http.HandleFunc("/cat", getCatJSON)
+	http.HandleFunc("/mts", getMtsJSON)
+	http.HandleFunc("/slab", getSlabJSON)
 
 	http.ListenAndServe(":3030", nil)
 }
