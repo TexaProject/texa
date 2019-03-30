@@ -3,16 +3,22 @@ package main
 import (
 	"crypto/md5"
 	"encoding/json"
+	"strings"
+
+	"github.com/pontiyaraja/texa/storage"
 
 	"fmt"
 	"html/template"
 	"io"
 	"net/http"
+	_ "net/http/pprof"
 	"os"
 	"regexp"
 	"strconv"
 	"time"
+
 	//Import this by exec in CLI: `go get -u github.com/TexaProject/texalib`
+
 	"github.com/TexaProject/texajson"
 	"github.com/TexaProject/texalib"
 )
@@ -44,12 +50,26 @@ func texaHandler(w http.ResponseWriter, r *http.Request) {
 		QSA := r.Form.Get("scoreArray")
 		SlabName := r.Form.Get("SlabName")
 		slabSequence := r.Form.Get("slabSequence")
+		chatHistory := r.Form.Get("chatHistory")
+		timeStamp := r.Form.Get("timeStamp")
 
 		fmt.Println("###", AIName)
 		fmt.Println("###", IntName)
 		fmt.Println("###", QSA)
 		fmt.Println("###", SlabName)
 		fmt.Println("###", slabSequence)
+		chatArray := strings.Split(chatHistory, ",")
+		fmt.Println("chatArray ######", chatArray)
+		fmt.Println("-------------------------------", timeStamp)
+		timeInt, err := strconv.ParseInt(timeStamp, 10, 64)
+		if err != nil {
+			fmt.Println("failed to parse time stamp ")
+		}
+		timeNow := time.Unix(timeInt, 0)
+
+		err = storage.AddToMongo(timeNow, chatArray)
+
+		fmt.Println("error adding data to mongo ", err)
 
 		// LOGIC
 		re := regexp.MustCompile("[0-1]+")
@@ -150,6 +170,10 @@ func texaHandler(w http.ResponseWriter, r *http.Request) {
 
 func welcomeHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("method:", r.Method) //get	request	method
+	//test loop to profiling the welcome router
+	for i := 0; i <= 10000; i++ {
+		fmt.Println(i)
+	}
 	if r.Method == "GET" {
 		t, _ := template.ParseFiles("www/welcome.html")
 		t.Execute(w, nil)
@@ -267,6 +291,11 @@ func main() {
 	http.HandleFunc("/cat", getCatJSON)
 	http.HandleFunc("/mts", getMtsJSON)
 	http.HandleFunc("/slab", getSlabJSON)
-
+	//http.Handle("/debug/pprof/", pprof.)
 	http.ListenAndServe(":3030", nil)
+}
+func print() {
+	for i := 0; i < 1000; i++ {
+		fmt.Println(i)
+	}
 }
