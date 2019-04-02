@@ -171,9 +171,9 @@ func texaHandler(w http.ResponseWriter, r *http.Request) {
 func welcomeHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("method:", r.Method) //get	request	method
 	//test loop to profiling the welcome router
-	for i := 0; i <= 10000; i++ {
-		fmt.Println(i)
-	}
+	// for i := 0; i <= 10000; i++ {
+	// 	fmt.Println(i)
+	// }
 	if r.Method == "GET" {
 		t, _ := template.ParseFiles("www/welcome.html")
 		t.Execute(w, nil)
