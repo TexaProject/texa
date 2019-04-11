@@ -17,28 +17,20 @@ The system uses a number of open source projects to work properly:
 ## Installation:
 
 ### Go:
+
 TEXA is written in [Go](http://golang.org) v1.7+. If you don't have a Go
 development environment, please [set one up](http://golang.org/doc/code.html).
 
 ### Redis: 
+
 Texa using the [texalib]
 to store the slabs, CatPages and MtsPages, in [redis] (https://redis.io/)
 [Redis quick start](https://redis.io/topics/quickstart#redis-quick-start).
 
 ### MongoDB:
+
 TEXA using [MongoDB](https://docs.mongodb.com/manual/installation) to persist the conversation between 
 AI and human for every session.
-
-### Dependencies:
-Install the dependencies, devDependencies and start the server.
-
-``$ go get -u https://github.com/TexaProject/texajson.git``
-
-``$ go get -u https://github.com/TexaProject/texalib.git``
-
-``$ go get -u github.com/go-redis/redis``
-
-``$ go get gopkg.in/mgo.v2``
 
 ### Build on a local OS:
 
@@ -57,6 +49,17 @@ Clone the texa project from github
 Navigate to the texa project
 
 ``$ cd $GOPATH/src/texa/``
+
+Run make file, by the following order
+
+```sh
+   make install
+   make test
+   make run
+
+   make fmt
+   #before you push your changes, to format the code base
+```
 
 follow the below steps, to set up your local git config to contribute
 
