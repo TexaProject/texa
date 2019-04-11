@@ -71,7 +71,7 @@ git remote set-url --push upstream no_push
 git remote -v
 ```
 
-### 3 Branch
+### Branch
 
 Get your local master up to date:
 
@@ -92,7 +92,7 @@ Run the main.go
 
 ``$ go run main.go``
 
-## unit test and bench mark test:
+## Unit test and bench mark test:
 
 Run unit test on package level
 
@@ -117,14 +117,16 @@ To use pprof, link this package into app:
 
 ``import _ "net/http/pprof"``
 
-### pprof:
+### Pprof:
 
 [pprof](https://github.com/google/pprof) is a tool for visualization and analysis of profiling data.
 Install the belos dependency to build the pprof tool
 
 ```go get -u github.com/google/pprof```
 
-### pprof sample:
+### Pprof sample:
+
+#### Profiling http request:
 
 Testing the sample load by manual script file.
 
@@ -144,6 +146,18 @@ Visualize and analysis by pprof tool
 ```pprof -http=:6060 pprof.main.samples.cpu.01.pb.gz```
 
 It starts pprof tool app on port 6060 and visualizing the profiling data including flame graph
+
+#### Profiling benchmark test:
+
+Below command will execute the benchmark test, and it will create a binary `storage.test`
+and creates `profile.out` file.
+
+```go test -run=BenchmarkAddtoMongo -bench=.```
+
+Then, visualize and analysis the profiling data by pprof tool, pprof starts a service in 8081. 
+
+```pprof -http=localhost:8081 storage.test profile.out```
+
 
 ## TODO (Future Work)
 
