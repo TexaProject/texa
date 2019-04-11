@@ -1,7 +1,6 @@
-/*
- storage package to store the data in mongo, this package
- creates a session and persists the session, to contact with mongo.
- And creates document in mongo
+/*package storage package to store the data in mongo, this package
+creates a session and persists the session, to contact with mongo.
+And creates document in mongo.
 */
 package storage
 
@@ -41,14 +40,14 @@ func getSession() (*mgo.Session, error) {
 	return session.Copy(), err
 }
 
-//[{userINput:"", AIOutput:""}, ....]
+//ChatItem to store the coonversation data between user and AI
 type ChatItem struct {
 	UserInput string `bson:"userInput"`
 	AIOutPut  string `bson:"AIOutput"`
 }
 
-//formJson takes input as string array and forms the chatItem array
-func formJson(chathistory []string) []ChatItem {
+//formJSON takes input as string array and forms the chatItem array
+func formJSON(chathistory []string) []ChatItem {
 	var chatHistoryData []ChatItem
 	var chatData ChatItem
 	for index, data := range chathistory {
