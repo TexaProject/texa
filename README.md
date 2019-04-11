@@ -24,7 +24,7 @@ development environment, please [set one up](http://golang.org/doc/code.html).
 ### Redis: 
 
 Texa using the [texalib]
-to store the slabs, CatPages and MtsPages, in [redis] (https://redis.io/)
+to store the slabs, CatPages and MtsPages, in [redis](https://redis.io/)
 [Redis quick start](https://redis.io/topics/quickstart#redis-quick-start).
 
 ### MongoDB:
@@ -90,10 +90,6 @@ git checkout -b mytexa
 ```
 
 Then edit code on the `mytexa` branch.
-
-Run the main.go 
-
-``$ go run main.go``
 
 ## Unit test and bench mark test:
 
