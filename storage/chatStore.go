@@ -1,3 +1,8 @@
+/*
+ storage package to store the data in mongo, this package
+ creates a session and persists the session, to contact with mongo.
+ And creates document in mongo
+*/
 package storage
 
 import (
@@ -17,6 +22,9 @@ type chatHistory struct {
 
 var c sync.Mutex
 
+//getSession to get mongo session, this function validates the session is empty or not
+//if session is valid then it returns the mongo session, otherwise creates a mongo session
+//and returns the copy session.
 func getSession() (*mgo.Session, error) {
 	var err error
 	if session != nil {
@@ -39,6 +47,7 @@ type ChatItem struct {
 	AIOutPut  string `bson:"AIOutput"`
 }
 
+//formJson takes input as string array and forms the chatItem array
 func formJson(chathistory []string) []ChatItem {
 	var chatHistoryData []ChatItem
 	var chatData ChatItem
@@ -56,6 +65,8 @@ func formJson(chathistory []string) []ChatItem {
 	return chatHistoryData
 }
 
+//AddToMongo is the interface to communicate to mongo by mongo session
+//it creates document in mongo
 func AddToMongo(sessionID time.Time, chatArray []string) error {
 	session, err := getSession()
 	if err != nil {

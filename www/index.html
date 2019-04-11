@@ -85,15 +85,9 @@
     function elizaStep() {
       var f = document.forms.e_form;
       var userinput = f.e_input.value;
-      if (userinput != ''){
-          alert(userinput)
-          chatHistory.push(userinput)
-          chatHistory.push(eliza.transform(userinput))
-        }
       if (eliza.quit) {
         f.e_input.value = '';
         if (confirm("This session is over.\nStart over?")) {
-          $('#chatHistory').val(chatHistory);
           elizaReset();
         }
         f.e_input.focus();
@@ -102,8 +96,8 @@
         var usr = 'YOU:   ' + userinput;
         var aiResp = eliza.transform(userinput);
         var rpl = 'ELIZA: ' + aiResp
-        //chatHistory.push(userinput)
-        //chatHistory.push(aiResp)
+        chatHistory.push(userinput)
+        chatHistory.push(aiResp)
         elizaLines.push(usr);
         elizaLines.push(rpl);
         // display nicely
@@ -124,10 +118,11 @@
         elizaLines.push(initial);
         chatHistory.push("")
         chatHistory.push(initialData)
+        alert(chatHistory)
         f.e_display.value = initial + '\n';
         timeStamp = Math.round((new Date()).getTime() / 1000);
       }
-
+      $('#chatHistory').val(chatHistory);
       f.e_input.value = '';
       f.e_input.focus();
     }
@@ -174,8 +169,6 @@
 
       alert("ScoreArray: " + scoreArray);
       alert("SlabSequence: " + slabSequence);
-      
-
       $('#slabSequence').val(slabSequence);
       $('#scoreArray').val(scoreArray);
       $('#IntName').val(IntName);
