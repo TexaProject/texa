@@ -70,7 +70,7 @@ git remote set-url --push upstream no_push
 git remote -v
 ```
 
-### Contribute
+## Contribute
 
 Get your local master up to date:
 
