@@ -233,9 +233,7 @@ func resultHandler(w http.ResponseWriter, r *http.Request) {
 
 //getCatJSON to get the cat.json formed from the texajson library
 func getCatJSON(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("method:", r.Method) //get	request	method
-	catPages := texajson.GetCatPages()
-	bs, err := json.Marshal(catPages)
+	bs, err := getCatJPages()
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(1)
@@ -247,9 +245,7 @@ func getCatJSON(w http.ResponseWriter, r *http.Request) {
 
 //getMtsJSON to get the mts.json formed from the texajson library
 func getMtsJSON(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("method:", r.Method) //get	request	method
-	mtsPage := texajson.GetPages()
-	bs, err := json.Marshal(mtsPage)
+	bs, err := getCatJPages()
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(1)
@@ -257,6 +253,11 @@ func getMtsJSON(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(bs)
+}
+
+func getCatJPages() ([]byte, error) {
+	catPages := texajson.GetCatPages()
+	return json.Marshal(catPages)
 }
 
 //getSlabJSON to get the slab pages as json from redis
