@@ -9,7 +9,7 @@ import (
 //test case to form the chat history struct
 func TestFormJson(t *testing.T) {
 	inputString := []string{"empty", "AI1", "UI2", "AI2", "UI3", "AI3"}
-	resp := formJson(inputString)
+	resp := formJSON(inputString)
 	t.Log(resp)
 }
 
