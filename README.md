@@ -31,9 +31,6 @@ TEXA uses Redis to store all the mathematical data used by the texalib package, 
 
 TEXA persists all your chat history in a local MongoDB instance, keeping your interrogation data private. You can install [MongoDB](https://docs.mongodb.com/manual/installation) and learn more about MongoDB [here](https://docs.mongodb.com/manual/tutorial/getting-started).
 
-TEXA using [MongoDB](https://docs.mongodb.com/manual/installation) to persist the conversation between 
-AI and human for every session.
-
 ### Build on a local OS:
 
 Make sure your go version is 1.7+
