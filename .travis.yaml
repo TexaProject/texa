@@ -1,0 +1,15 @@
+language: go
+
+go:
+ - "1.12"
+
+sudo: false
+
+before_script:
+  
+
+script:
+ - cd ${TRAVIS_HOME}/gopath/src/github.com/pontiya/texa
+ - make install
+ - make test
+ - make run
