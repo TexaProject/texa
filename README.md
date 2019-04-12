@@ -1,5 +1,7 @@
 # Turing test EXtended Architecture (TEXA): A method for interacting, evaluating and assessing AI
 
+[![Build Status](https://travis-ci.com/pontiyaraja/texa.png)](https://travis-ci.com/pontiyaraja/texa)
+
 TEXA is a novel framework backed by a mathematical oriented theory(Texa Theory, refer to /texa-docs) for interacting, evaluating and assessing AIs.
 
 
@@ -23,11 +25,11 @@ development environment, please [set one up](http://golang.org/doc/code.html).
 
 ### Redis: 
 
-Texa using the [texalib]
-to store the slabs, CatPages and MtsPages, in [redis](https://redis.io/)
-[Redis quick start](https://redis.io/topics/quickstart#redis-quick-start).
+TEXA uses Redis to store all the mathematical data used by the texalib package, depended by the TEXA API. You can [install redis](https://redis.io/topics/quickstart#redis-quick-start) and learn more about [redis](https://redis.io/) here.
 
 ### MongoDB:
+
+TEXA persists all your chat history in a local MongoDB instance, keeping your interrogation data private. You can install [MongoDB](https://docs.mongodb.com/manual/installation) and learn more about MongoDB [here](https://docs.mongodb.com/manual/tutorial/getting-started).
 
 TEXA using [MongoDB](https://docs.mongodb.com/manual/installation) to persist the conversation between 
 AI and human for every session.
@@ -56,9 +58,6 @@ Run make file, by the following order
    make install
    make test
    make run
-
-   make fmt
-   #before you push your changes, to format the code base
 ```
 
 follow the below steps, to set up your local git config to contribute
@@ -74,7 +73,7 @@ git remote set-url --push upstream no_push
 git remote -v
 ```
 
-### Branch
+### Contribute
 
 Get your local master up to date:
 
@@ -90,6 +89,15 @@ git checkout -b mytexa
 ```
 
 Then edit code on the `mytexa` branch.
+
+Validate your changes before raise PR
+
+```sh
+   make install
+   make test
+   make fmt
+   #before you push your changes, to format the code base
+```
 
 ## Unit test and bench mark test:
 
