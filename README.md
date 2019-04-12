@@ -1,9 +1,11 @@
 # Turing test EXtended Architecture (TEXA): A method for interacting, evaluating and assessing AI
 
+[![Build Status](https://travis-ci.org/TexaProject/texa.png)](https://travis-ci.org/TexaProject/texa)
+
 TEXA is a novel framework backed by a mathematical oriented theory(Texa Theory, refer to /texa-docs) for interacting, evaluating and assessing AIs.
 
 
-# LIBRARIES USED:
+## LIBRARIES USED:
 
 The system uses a number of open source projects to work properly:
 
@@ -14,33 +16,159 @@ The system uses a number of open source projects to work properly:
 * [ElizaBOT-JS] - Javascript implementation of the ELIZA specification by Weizenbaum, 1966. Special thanks to Landsteiner!
 
 
-# Installation:
+## Installation:
 
-TEXA requires [Go Lang](https://golang.org/)  v1.7+ to run.
+### Go:
 
-Install the dependencies, devDependencies and start the server.
+TEXA is written in [Go](http://golang.org) v1.7+. If you don't have a Go
+development environment, please [set one up](http://golang.org/doc/code.html).
+
+### Redis: 
+
+TEXA uses Redis to store all the mathematical data used by the texalib package, depended by the TEXA API. You can [install redis](https://redis.io/topics/quickstart#redis-quick-start) and learn more about [redis](https://redis.io/) here.
+
+### MongoDB:
+
+TEXA persists all your chat history in a local MongoDB instance, keeping your interrogation data private. You can install [MongoDB](https://docs.mongodb.com/manual/installation) and learn more about MongoDB [here](https://docs.mongodb.com/manual/tutorial/getting-started).
+
+### Build on a local OS:
+
+Make sure your go version is 1.7+
 
 ``$ go version``
 
+Move to your 
+
 ``$ cd $GOPATH/src/``
+
+Clone the texa project from github
 
 ``$ git clone https://github.com/TexaProject/texa.git``
 
-``$ go get -u https://github.com/TexaProject/texajson.git``
-
-``$ go get -u https://github.com/TexaProject/texalib.git``
+Navigate to the texa project
 
 ``$ cd $GOPATH/src/texa/``
 
-``$ go run main.go``
+Run make file, by the following order
+
+```sh
+   make install
+   make test
+   make run
+```
+
+follow the below steps, to set up your local git config to contribute
+
+```sh
+git remote add upstream https://github.com/TexaProject/texa.git
+# or: git remote add upstream git@github.com:TexaProject/texa.git
+
+# Never push to upstream master
+git remote set-url --push upstream no_push
+
+# Confirm that your remotes make sense:
+git remote -v
+```
+
+## Contribute
+
+Get your local master up to date:
+
+```sh
+git fetch upstream
+git checkout master
+git rebase upstream/master
+```
+
+Branch from it:
+```sh
+git checkout -b mytexa
+```
+
+Then edit code on the `mytexa` branch.
+
+Validate your changes before raise PR
+
+```sh
+   make install
+   make test
+   make fmt
+   #before you push your changes, to format the code base
+```
+
+## Unit test and bench mark test:
+
+Run unit test on package level
+
+``go test texa/storage``
+
+Run Benchmark test on package level
+
+``go test go test texa/storage -bench=.``
+
+Run a unit test, navigate to package 
+
+``go test -run=TestAddtoMongo``
+
+Run a benchmark test
+
+``go test -run=BenchmarkAddtoMongo -bench=.``
+
+## Profiling Texa App:
+
+Profiling Texa App by using Go [pprof package](https://golang.org/pkg/net/http/pprof/)
+To use pprof, link this package into app:
+
+``import _ "net/http/pprof"``
+
+### Pprof:
+
+[pprof](https://github.com/google/pprof) is a tool for visualization and analysis of profiling data.
+Install the belos dependency to build the pprof tool
+
+```go get -u github.com/google/pprof```
+
+### Pprof sample:
+
+#### Profiling http request:
+
+Testing the sample load by manual script file.
+
+```sh
+   for i in {1..1000}; do curl -X POST http://localhost:3030/texa -d IntName=pan -d scoreArray=[0,1,1] 
+   -d SlabName=sports -d slabSequence=[sports,sports,sports] 
+   -d chatHistory=[hi,hello! how can I help you,how is weather today, do you wanna know more,yes,its nice talking to you] -d timeStamp=32465466754; done
+```
+
+Befor run the above script start to monitor the profiling of Texa app by 
+
+```go tool pprof http://localhost:3030/debug/pprof/profile?seconds=30```
+
+Profiling creates a pprof file eg : `pprof.main.samples.cpu.01.pb.gz`
+Visualize and analysis by pprof tool 
+
+```pprof -http=:6060 pprof.main.samples.cpu.01.pb.gz```
+
+It starts pprof tool app on port 6060 and visualizing the profiling data including flame graph
+
+#### Profiling benchmark test:
+
+Below command will execute the benchmark test, and it will create a binary `storage.test`
+and creates `profile.out` file.
+
+```go test -run=BenchmarkAddtoMongo -bench=.```
+
+Then, visualize and analysis the profiling data by pprof tool, pprof starts a service in 8081. 
+
+```pprof -http=localhost:8081 storage.test profile.out```
 
 
-### TODO (Future Work)
+## TODO (Future Work)
 
- - Stability offered only for Unit Test Instance. Can support multiple cases without SLA.
+- Stability offered only for Unit Test Instance. Can support multiple cases without SLA.
 - Lacks complete support for non-Eliza AIs(non-JS REF).
 - APIs can be exposed to build use-cases such as ranking apps etc.
- - Feel free to try new ideas!
+- Feel free to try new ideas!
 
 
 License

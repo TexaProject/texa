@@ -60,6 +60,7 @@
 
     var eliza = new ElizaBot();
     var elizaLines = new Array();
+    var chatHistory = new Array();
 
     var displayCols = 60;
     var displayRows = 20;
@@ -67,11 +68,13 @@
     var scoreArray = [];
     var jsonString = "";
     var slabSequence = [];
+    var timeStamp = Math.round((new Date()).getTime() / 1000);
 
     // elizaReset() resets all forms and associated values
     function elizaReset() {
       eliza.reset();
       elizaLines.length = 0;
+      chatHistory.length = 0;
       elizaStep();
       while (scoreArray.length > 0) {
         scoreArray.pop();
@@ -84,12 +87,17 @@
       var userinput = f.e_input.value;
       if (eliza.quit) {
         f.e_input.value = '';
-        if (confirm("This session is over.\nStart over?")) elizaReset();
+        if (confirm("This session is over.\nStart over?")) {
+          elizaReset();
+        }
         f.e_input.focus();
         return;
       } else if (userinput != '') {
         var usr = 'YOU:   ' + userinput;
-        var rpl = 'ELIZA: ' + eliza.transform(userinput);
+        var aiResp = eliza.transform(userinput);
+        var rpl = 'ELIZA: ' + aiResp
+        chatHistory.push(userinput)
+        chatHistory.push(aiResp)
         elizaLines.push(usr);
         elizaLines.push(rpl);
         // display nicely
@@ -105,10 +113,16 @@
         f.e_display.value = elizaLines.join('\n');
       } else if (elizaLines.length == 0) {
         // no input and no saved lines -> output initial
-        var initial = 'ELIZA: ' + eliza.getInitial();
+        var initialData = eliza.getInitial()
+        var initial = 'ELIZA: ' + initialData;
         elizaLines.push(initial);
+        chatHistory.push("")
+        chatHistory.push(initialData)
+        alert(chatHistory)
         f.e_display.value = initial + '\n';
+        timeStamp = Math.round((new Date()).getTime() / 1000);
       }
+      $('#chatHistory').val(chatHistory);
       f.e_input.value = '';
       f.e_input.focus();
     }
@@ -155,11 +169,11 @@
 
       alert("ScoreArray: " + scoreArray);
       alert("SlabSequence: " + slabSequence);
-
       $('#slabSequence').val(slabSequence);
       $('#scoreArray').val(scoreArray);
       $('#IntName').val(IntName);
       $('#SlabName').val(SlabName);
+      $('#timeStamp').val(timeStamp);
     }
   </SCRIPT>
 </HEAD>
@@ -204,6 +218,8 @@
     <input type="hidden" id="IntName" name="IntName">
     <input type="hidden" id="SlabName" name="SlabName">
     <input type="hidden" id="slabSequence" name="slabSequence">
+    <input type="hidden" id="chatHistory" name="chatHistory">
+    <input type="hidden" id="timeStamp" name="timeStamp">
     <br />><center><input type="submit" value="Submit Score"></center>
   </FORM>
 </BODY>
