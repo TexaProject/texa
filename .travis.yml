@@ -1,8 +1,17 @@
+sudo: required
+dist: trusty
+
 language: go
 go:
-  - "1.10"
+  - "1.12"
 
-sudo: false
+services :
+  - redis
+  - mongodb
+
+
+before_script:
+  - mongo
 
 script:
   - make install
