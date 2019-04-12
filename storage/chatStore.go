@@ -74,5 +74,5 @@ func AddToMongo(sessionID time.Time, chatArray []string) error {
 	}
 	defer session.Close()
 	c := session.DB("texa").C("chat")
-	return c.Insert(chatHistory{sessionID, formJson(chatArray)})
+	return c.Insert(chatHistory{sessionID, formJSON(chatArray)})
 }
