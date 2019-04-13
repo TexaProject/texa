@@ -1,6 +1,6 @@
 # Turing test EXtended Architecture (TEXA): A method for interacting, evaluating and assessing AI
 
-[![Build Status](https://travis-ci.org/TexaProject/texa.png)](https://travis-ci.org/TexaProject/texa)
+[![Build Status](https://travis-ci.org/TexaProject/texa.svg?branch=master)](https://travis-ci.org/TexaProject/texa)
 
 TEXA is a novel framework backed by a mathematical oriented theory(Texa Theory, refer to /texa-docs) for interacting, evaluating and assessing AIs.
 
