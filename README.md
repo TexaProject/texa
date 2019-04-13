@@ -25,7 +25,7 @@ development environment, please [set one up](http://golang.org/doc/code.html).
 
 ### Redis: 
 
-TEXA uses Redis to store all the mathematical data used by the texalib package, depended by the TEXA API. You can [install redis](https://redis.io/topics/quickstart#redis-quick-start) and learn more about [redis](https://redis.io/) here.
+TEXA uses Redis to store all the mathematical data used by the texalib package, depended by the TEXA API. You can [install redis](https://redis.io/topics/quickstart#redis-quick-start) and learn more about redis [here](https://redis.io/).
 
 ### MongoDB:
 
