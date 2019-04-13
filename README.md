@@ -1,6 +1,6 @@
 # Turing test EXtended Architecture (TEXA): A method for interacting, evaluating and assessing AI
 
-[![Build Status](https://travis-ci.org/TexaProject/texa.png)](https://travis-ci.org/TexaProject/texa)
+[![Build Status](https://travis-ci.org/TexaProject/texa.svg?branch=master)](https://travis-ci.org/TexaProject/texa)
 
 TEXA is a novel framework backed by a mathematical oriented theory(Texa Theory, refer to /texa-docs) for interacting, evaluating and assessing AIs.
 
@@ -25,7 +25,7 @@ development environment, please [set one up](http://golang.org/doc/code.html).
 
 ### Redis: 
 
-TEXA uses Redis to store all the mathematical data used by the texalib package, depended by the TEXA API. You can [install redis](https://redis.io/topics/quickstart#redis-quick-start) and learn more about [redis](https://redis.io/) here.
+TEXA uses Redis to store all the mathematical data used by the texalib package, depended by the TEXA API. You can [install redis](https://redis.io/topics/quickstart#redis-quick-start) and learn more about redis [here](https://redis.io/).
 
 ### MongoDB:
 

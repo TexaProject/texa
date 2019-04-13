@@ -54,8 +54,6 @@ func texaHandler(w http.ResponseWriter, r *http.Request) {
 		chatHistory := r.Form.Get("chatHistory")
 		timeStamp := r.Form.Get("timeStamp")
 
-		//fmt.Println("###", AIName)
-		//fmt.Println("###", IntName)
 		// fmt.Println("###", QSA)
 		// fmt.Println("###", SlabName)
 		// fmt.Println("###", slabSequence)
@@ -68,7 +66,7 @@ func texaHandler(w http.ResponseWriter, r *http.Request) {
 		timeNow := time.Unix(timeInt, 0)
 
 		err = storage.AddToMongo(timeNow, chatArray)
-
+    
 		fmt.Println("error adding data to mongo ", err)
 
 		// LOGIC
@@ -138,7 +136,6 @@ func texaHandler(w http.ResponseWriter, r *http.Request) {
 			slabPageArray = texajson.AddtoSlabPageArray(slabPages[z], slabPageArray)
 		}
 		// fmt.Println("###finalslabPageArray")
-
 		texajson.SlabToJson(slabPageArray)
 		// fmt.Println("###JsonSlabPageArray: ")
 		// fmt.Println(JsonSlabPageArray)
@@ -157,10 +154,6 @@ func texaHandler(w http.ResponseWriter, r *http.Request) {
 
 		// for z := 0; z < len(CatPages); z++ {
 		// 	CatPageArray = texajson.AddtoCatPageArray(CatPages[z], CatPageArray)
-		// }
-		// fmt.Println("###finalCatPageArray")
-		// fmt.Println(CatPageArray)
-
 		texajson.CatToJson(CatPageArray)
 		// fmt.Println("###JsonCatPageArray: ")
 		// fmt.Println(JsonCatPageArray)
@@ -243,7 +236,7 @@ func getCatJSON(w http.ResponseWriter, r *http.Request) {
 
 //getMtsJSON to get the mts.json formed from the texajson library
 func getMtsJSON(w http.ResponseWriter, r *http.Request) {
-	bs, err := getCatJPages()
+	bs, err := getMtsJPages()
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(1)
@@ -256,6 +249,11 @@ func getMtsJSON(w http.ResponseWriter, r *http.Request) {
 func getCatJPages() ([]byte, error) {
 	catPages := texajson.GetCatPages()
 	return json.Marshal(catPages)
+}
+
+func getMtsJPages() ([]byte, error) {
+	mtsPages := texajson.GetPages()
+	return json.Marshal(mtsPages)
 }
 
 //getSlabJSON to get the slab pages as json from redis
