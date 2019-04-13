@@ -54,14 +54,13 @@ func texaHandler(w http.ResponseWriter, r *http.Request) {
 		chatHistory := r.Form.Get("chatHistory")
 		timeStamp := r.Form.Get("timeStamp")
 
-		// fmt.Println("###", AIName)
-		// fmt.Println("###", IntName)
+		//fmt.Println("###", AIName)
+		//fmt.Println("###", IntName)
 		// fmt.Println("###", QSA)
 		// fmt.Println("###", SlabName)
 		// fmt.Println("###", slabSequence)
 		chatArray := strings.Split(chatHistory, ",")
 		fmt.Println("chatArray ######", chatArray)
-		// fmt.Println("-------------------------------", timeStamp)
 		timeInt, err := strconv.ParseInt(timeStamp, 10, 64)
 		if err != nil {
 			fmt.Println("failed to parse time stamp ")
@@ -98,7 +97,7 @@ func texaHandler(w http.ResponseWriter, r *http.Request) {
 		// fmt.Println("###HumanQSA:")
 		// fmt.Println(HumanQSA)
 
-		//TSA := texalib.GetTransactionSeries(ArtiQSA, HumanQSA)
+		texalib.GetTransactionSeries(ArtiQSA, HumanQSA)
 		// fmt.Println("###TSA:")
 		// fmt.Println(TSA)
 
@@ -121,7 +120,7 @@ func texaHandler(w http.ResponseWriter, r *http.Request) {
 		// fmt.Println("###AddedPageArray")
 		// fmt.Println(PageArray)
 
-		//JsonPageArray := texajson.ToJson(PageArray)
+		texajson.ToJson(PageArray)
 		// fmt.Println("###jsonPageArray:")
 		// fmt.Println(JsonPageArray)
 
@@ -139,9 +138,8 @@ func texaHandler(w http.ResponseWriter, r *http.Request) {
 			slabPageArray = texajson.AddtoSlabPageArray(slabPages[z], slabPageArray)
 		}
 		// fmt.Println("###finalslabPageArray")
-		// fmt.Println(slabPageArray)
 
-		//JsonSlabPageArray := texajson.SlabToJson(slabPageArray)
+		texajson.SlabToJson(slabPageArray)
 		// fmt.Println("###JsonSlabPageArray: ")
 		// fmt.Println(JsonSlabPageArray)
 
@@ -159,11 +157,11 @@ func texaHandler(w http.ResponseWriter, r *http.Request) {
 
 		// for z := 0; z < len(CatPages); z++ {
 		// 	CatPageArray = texajson.AddtoCatPageArray(CatPages[z], CatPageArray)
-		// // }
+		// }
 		// fmt.Println("###finalCatPageArray")
 		// fmt.Println(CatPageArray)
 
-		//JsonCatPageArray := texajson.CatToJson(CatPageArray)
+		texajson.CatToJson(CatPageArray)
 		// fmt.Println("###JsonCatPageArray: ")
 		// fmt.Println(JsonCatPageArray)
 	}
@@ -262,7 +260,6 @@ func getCatJPages() ([]byte, error) {
 
 //getSlabJSON to get the slab pages as json from redis
 func getSlabJSON(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("method:", r.Method) //get	request	method
 	slabPages := texajson.GetSlabPages()
 	bs, err := json.Marshal(slabPages)
 	if err != nil {
