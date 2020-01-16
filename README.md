@@ -2,7 +2,9 @@
 
 [![Build Status](https://travis-ci.org/TexaProject/texa.svg?branch=master)](https://travis-ci.org/TexaProject/texa)
 
-TEXA is a novel framework backed by a mathematical oriented theory(Texa Theory, refer to /texa-docs) for interacting, evaluating and assessing AIs.
+TEXA is a novel framework backed by a mathematical oriented theory(Texa Theory, refer to /texa-docs) for interacting, evaluating and assessing AIs. 
+
+#### We are helping answer an important question: _"What's real and what's not?"_
 
 
 ## LIBRARIES USED:
