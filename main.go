@@ -12,7 +12,7 @@ import (
 	"regexp"
 	"strconv"
 	"time"
-	//Import this by exec in CLI: `go get -u github.com/TexaProject/texalib`
+
 	"github.com/TexaProject/texajson"
 	"github.com/TexaProject/texalib"
 )
@@ -145,6 +145,21 @@ func texaHandler(w http.ResponseWriter, r *http.Request) {
 		JsonCatPageArray := texajson.CatToJson(CatPageArray)
 		fmt.Println("###JsonCatPageArray: ")
 		fmt.Println(JsonCatPageArray)
+
+		ResultObject := texajson.NewResultObject(AIName)
+
+		newSessionData := texajson.NewInterrogationObject(IntName, ArtiMts, HumanMts, CatPages.CatVal)
+		fmt.Println("PRINTING NEW SESSION DATA BEFORE ADDING: ", newSessionData)
+
+		ResultObject.Interrogations = append(ResultObject.Interrogations, newSessionData)
+		fmt.Println("PRINTING UPDATED RESULT OBJECT: ", ResultObject)
+
+		// fmt.Println("FINAL DATA IN BYTES: ", finalData)
+		// WriteToLocalCache(finalData)
+		cid := texajson.WriteDataToIPFS(ResultObject)
+		if len(cid) > 0 {
+			fmt.Println("Successfully wrote the session data to IPFS at ", cid)
+		}
 	}
 }
 
