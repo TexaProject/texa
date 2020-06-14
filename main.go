@@ -35,9 +35,6 @@ func texaHandler(w http.ResponseWriter, r *http.Request) {
 	} else {
 		r.ParseForm()
 		// fmt.Printf("%+v\n", r.Form)
-		fmt.Fprint(w, "<html><head><link rel=\"stylesheet\" href=\"http://localhost:3030/css/bootstrap.min.css\"><title>File Ack | TEXA Project</title></head><body>ACKNOWLEDGEMENT: Received the scores. <br /><br />Info:<br />")
-		fmt.Fprint(w, "<br /><br />VISIT: /result for interrogation.")
-		fmt.Fprintf(w, "<br /><br /><input type=\"button\" class=\"btn info\" onclick=\"location.href='http://localhost:3030/result';\" value=\"Visit /result\" /></body></html>")
 
 		fmt.Println("--INTERROGATION FORM DATA--")
 		IntName = r.Form.Get("IntName")
@@ -160,6 +157,10 @@ func texaHandler(w http.ResponseWriter, r *http.Request) {
 		if len(cid) > 0 {
 			fmt.Println("Successfully wrote the session data to IPFS at ", cid)
 		}
+		globalURL := "https://explore.ipld.io/#/explore/" + cid
+		fmt.Fprint(w, "<html><head><link rel=\"stylesheet\" href=\"http://localhost:3030/css/bootstrap.min.css\"><title>File Ack | TEXA Project</title></head><body>ACKNOWLEDGEMENT: Received the scores. <br /><br />Info:<br />")
+		fmt.Fprint(w, "<br /><br />VISIT: <b> <a href=\"", globalURL, "\">", globalURL, "</a></b> for interrogation results. This link is public and the result data is accessible globally!")
+		fmt.Fprintf(w, "<br /><br /><input type=\"button\" class=\"btn info\" onclick=\"location.href='http://localhost:3030/result';\" value=\"Visit /result\" /></body></html>")
 	}
 }
 
