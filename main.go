@@ -1,8 +1,13 @@
 package main
 
 import (
+	"context"
+	"crypto/ecdsa"
 	"crypto/md5"
 	"encoding/json"
+	"io/ioutil"
+	"log"
+	"math/big"
 
 	"fmt"
 	"html/template"
@@ -15,6 +20,12 @@ import (
 
 	"github.com/TexaProject/texajson"
 	"github.com/TexaProject/texalib"
+
+	store "github.com/TexaProject/store"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/ethclient"
 )
 
 // AIName exports form value from /welcome globally
@@ -22,6 +33,24 @@ var AIName string
 
 // IntName exports form value from /texa globally
 var IntName string
+
+//Config is used to extract data and credentials from config.json(this file is gitignore'ed)
+type Config struct {
+	EthereumRPCEndpoint    string `json:"ethereum_rpc_endpoint"`
+	WalletPrivateKey       string `json:"wallet_privatekey"`
+	StorageContractAddress string `json:"storage_contract_address"`
+}
+
+// GetConfigData reads the data from config.json and loads it into a variable
+func GetConfigData() Config {
+	var configData Config
+	bytes, err := ioutil.ReadFile("./config.json")
+	if err != nil {
+		log.Panicln("GetConfigData(): Issue in reading config file. Please have a check.")
+	}
+	json.Unmarshal(bytes, &configData)
+	return configData
+}
 
 func rootHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/welcome", 301)
@@ -133,9 +162,6 @@ func texaHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(CatPages)
 		CatPageArray = texajson.AddtoCatPageArray(CatPages, CatPageArray)
 
-		// for z := 0; z < len(CatPages); z++ {
-		// 	CatPageArray = texajson.AddtoCatPageArray(CatPages[z], CatPageArray)
-		// }
 		fmt.Println("###finalCatPageArray")
 		fmt.Println(CatPageArray)
 
@@ -151,17 +177,68 @@ func texaHandler(w http.ResponseWriter, r *http.Request) {
 		ResultObject.Interrogations = append(ResultObject.Interrogations, newSessionData)
 		fmt.Println("PRINTING UPDATED RESULT OBJECT: ", ResultObject)
 
-		// fmt.Println("FINAL DATA IN BYTES: ", finalData)
-		// WriteToLocalCache(finalData)
-		cid := texajson.WriteDataToIPFS(ResultObject)
+		cid := texajson.WriteDataToIPFS("https://ipfs.infura.io:5001", ResultObject)
 		if len(cid) > 0 {
 			fmt.Println("Successfully wrote the session data to IPFS at ", cid)
 		}
+
+		configData := GetConfigData()
+		tx := SubmitTxnToBlockchain(configData, AIName, cid)
+
+		txnURL := "https://kovan.etherscan.io/tx/" + tx
 		globalURL := "https://explore.ipld.io/#/explore/" + cid
+
 		fmt.Fprint(w, "<html><head><link rel=\"stylesheet\" href=\"http://localhost:3030/css/bootstrap.min.css\"><title>File Ack | TEXA Project</title></head><body>ACKNOWLEDGEMENT: Received the scores. <br /><br />Info:<br />")
-		fmt.Fprint(w, "<br /><br />VISIT: <b> <a href=\"", globalURL, "\">", globalURL, "</a></b> for interrogation results. This link is public and the result data is accessible globally!")
-		fmt.Fprintf(w, "<br /><br /><input type=\"button\" class=\"btn info\" onclick=\"location.href='http://localhost:3030/result';\" value=\"Visit /result\" /></body></html>")
+		fmt.Fprint(w, "<br /><br />VISIT: <b> <a href=\"", globalURL, "\">", globalURL, "</a></b> for interrogation results. This link is public and the result data is written to the public IPFS network!")
+		fmt.Fprint(w, "<br /><br />VISIT: <b> <a href=\"", txnURL, "\">", txnURL, "</a></b> for transaction details. This link is public and written to the Ethereum Kovan tesnet!")
+		fmt.Fprintf(w, "<br /><br /><input type=\"button\" class=\"btn info\" style=\"border: 2px solid black;\" onclick=\"location.href='http://localhost:3030/result';\" value=\"Visit /result\" /></body></html>")
 	}
+}
+
+// SubmitTxnToBlockchain is used to sign a transaction with the new CID of the session result data
+// along with the name of the corresponding AI (to maintain the latest CID, yet maintain provenance)
+func SubmitTxnToBlockchain(configData Config, AIName, cid string) string {
+	client, err := ethclient.Dial(configData.EthereumRPCEndpoint)
+	if err != nil {
+		log.Fatal(err)
+	}
+	privateKey, err := crypto.HexToECDSA(configData.WalletPrivateKey)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	publicKey := privateKey.Public()
+	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
+	if !ok {
+		log.Fatal("error casting public key to ECDSA")
+	}
+	fromAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
+	nonce, err := client.PendingNonceAt(context.Background(), fromAddress)
+	if err != nil {
+		log.Fatal(err)
+	}
+	gasPrice, err := client.SuggestGasPrice(context.Background())
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	auth := bind.NewKeyedTransactor(privateKey)
+	auth.Nonce = big.NewInt(int64(nonce))
+	auth.Value = big.NewInt(0)     // in wei
+	auth.GasLimit = uint64(300000) // in units
+	auth.GasPrice = gasPrice
+	address := common.HexToAddress(configData.StorageContractAddress)
+	instance, err := store.NewStore(address, client)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	tx, err := instance.LogTexaResultURL(auth, AIName, cid)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("Transaction committed for the new session: %s", tx.Hash().Hex())
+	return tx.Hash().Hex()
 }
 
 func welcomeHandler(w http.ResponseWriter, r *http.Request) {
@@ -201,7 +278,7 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "%v", handler.Header)
 		fmt.Fprintf(w, "<br /><br />Saved As: www/js/"+handler.Filename)
 		fmt.Fprint(w, "<br /><br />VISIT: /texa for interrogation.")
-		fmt.Fprintf(w, "<br /><br /><input type=\"button\" class=\"btn info\" onclick=\"location.href='http://localhost:3030/texa';\" value=\"Visit /texa\" /></body></html>")
+		fmt.Fprintf(w, "<br /><br /><input type=\"button\" class=\"btn info\" style=\"border: 2px solid black;\" onclick=\"location.href='http://localhost:3030/texa';\" value=\"Visit /texa\" /></body></html>")
 		f, err := os.OpenFile("./www/js/"+handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
 		if err != nil {
 			fmt.Println(err)
