@@ -1,59 +1,70 @@
-# Turing test EXtended Architecture (TEXA): A method for interacting, evaluating and assessing AI
+# Turing test EXtended Architecture (TEXA): A method for interacting, evaluating and assessing AI in a multi-context environment
 
-TEXA is a novel framework backed by a mathematical oriented theory(Texa Theory, refer to /texa-docs) for interacting, evaluating and assessing AIs.
+TEXA is a novel testing and benchmarking framework backed by a simple [mathematical theory](https://github.com/TexaProject/texa-docs). It can be used to interact, evaluate and assess AIs that work in multi-context environments. 
+
+In simple terms, TEXA enhances the concept of Turing testing by allowing the tester to assign a binary score to each and every interaction with the machine. This will allow us to quantify the quality of our models and contrast them between multiple contexts.
 
 
 # LIBRARIES USED:
 
 The system uses a number of open source projects to work properly:
 
-* [texalib] - Special Math library written from scratch for TEXA
-* [texajson] - Dedicated JSON interpreter library that serves as interface to  native Datastore.
-* [JS] - evented I/O for the backend
-* [jQuery] - duh
-* [ElizaBOT-JS] - Javascript implementation of the ELIZA specification by Weizenbaum, 1966. Special thanks to Landsteiner!
+* [texalib](https://github.com/TexaProject/texalib) - Special Math library written from scratch for TEXA
+* [texajson](https://github.com/TexaProject/texajson) - Dedicated JSON interpreter library that serves as interface to  native Datastore.
+* [store](https://github.com/TexaProject/store) - To interact with the Ethereum blockchain
+* JS - evented I/O for the backend
+* jQuery - duh
+* [ElizaBOT-JS](https://www.masswerk.at/elizabot/) - Javascript implementation of the ELIZA specification by Weizenbaum, 1966. Special thanks to Landsteiner!
 
 
 # Installation:
 
 TEXA requires [Go Lang](https://golang.org/)  v1.7+ to run.
 
-Install the dependencies, devDependencies and start the server.
+Check your version using the command:
+```sh
+$ go version
+```
 
-``$ go version``
+If go is installed, please make sure that you have a redis instance running on the default port. You can simply run one using the following command:
 
-``$ cd $GOPATH/src/``
+```sh
+$ docker run --name redis-test-instance -p 6379:6379 -d redis
+```
 
-``$ git clone https://github.com/TexaProject/texa.git``
+Once redis is running, make sure that you have created a config.json secret file on your local repo root folder. Here is an example content:
 
-``$ go get -u https://github.com/TexaProject/texajson.git``
+```json
+{
+    "ethereum_rpc_endpoint": "https://kovan.infura.io/v3/<YOUR-INFURA-TOKEN-GOES-HERE>",
+    "wallet_privatekey": "<YOUR-ETH-WALLET-PRIVATE-KEY>",
+    "storage_contract_address": "0x611ef1c4f63b5808535715120ace298a7de835b6"
+}
+```
 
-``$ go get -u https://github.com/TexaProject/texalib.git``
+Once you have Installed the dependencies, you may start the server:
 
-``$ cd $GOPATH/src/texa/``
+```sh
+$ go run main.go
+```
 
-``$ go run main.go``
+Now, read the Section 7 "SNAPSHOTS AND RESULTS" in the [whitepaper](https://github.com/TexaProject/texa-docs/blob/master/TEXA%20-%20Project%20Report.pdf) to understand the usage manual of this system.
 
+If you interact with the system as instructed in the whitepaper, the results of the interrogation session will be written to the public IPFS. The hash of the content on IPFS is used as the data to sign a new transaction on Ethereum Kovan blockchain.
+When the results are posted on IPFS and committed to the Ethereum blockchain, you'll receive 2 public links as shown below:
+![texa-results-ipfs-blockchain](images/texa-session-ipld-etherscan-result-links.jpg)
+These links are valid and remain useful until public IPFS and ethereum kovan testnet exists. This is a small demonstration of how AI and its testing process could be democratized using blockchain and other decentralized technologies.
 
 ### TODO (Future Work)
 
- - Stability offered only for Unit Test Instance. Can support multiple cases without SLA.
-- Lacks complete support for non-Eliza AIs(non-JS REF).
+- Needs testing
+- Lacks complete support for non-Eliza AIs(non-JS reference implementations through APIs).
 - APIs can be exposed to build use-cases such as ranking apps etc.
- - Feel free to try new ideas!
+- Feel free to try new ideas!
 
 
-License
+### License
 ----
 
 Apache 2.0 on the demonstrated work.
 Derived work carry respective Licenses. Please refer the links.
-
-[//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does its job. There is no need to format nicely because it shouldn't be seen. Thanks SO - http://stackoverflow.com/questions/4823468/store-comments-in-markdown-syntax)
-
-   [texalib]: <https://github.com/TexaProject/texalib>
-   [texajson]: <https://github.com/TexaProject/texajson>
-   [JS]: <http://nodejs.org>
-   [Twitter Bootstrap]: <http://twitter.github.com/bootstrap/>
-   [jQuery]: <http://jquery.com>
-   [ElizaBOT-JS]: <http://www.masswerk.at/elizabot/>
