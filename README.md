@@ -1,11 +1,17 @@
 # Turing test EXtended Architecture (TEXA): A method for interacting, evaluating and assessing AI in a multi-context environment
 
+[![Build Status](https://travis-ci.org/TexaProject/texa.svg?branch=master)](https://travis-ci.org/TexaProject/texa)
+
 TEXA is a novel testing and benchmarking framework backed by a simple [mathematical theory](https://github.com/TexaProject/texa-docs). It can be used to interact, evaluate and assess AIs that work in multi-context environments. 
 
 In simple terms, TEXA enhances the concept of Turing testing by allowing the tester to assign a binary score to each and every interaction with the machine. This will allow us to quantify the quality of our models and contrast them between multiple contexts.
 
+TEXA is a novel framework backed by a mathematical oriented theory(Texa Theory, refer to /texa-docs) for interacting, evaluating and assessing AIs. 
 
-# LIBRARIES USED:
+#### We are helping answer an important question: _"What's real and what's not?"_
+
+
+## LIBRARIES USED:
 
 The system uses a number of open source projects to work properly:
 
@@ -17,9 +23,20 @@ The system uses a number of open source projects to work properly:
 * [ElizaBOT-JS](https://www.masswerk.at/elizabot/) - Javascript implementation of the ELIZA specification by Weizenbaum, 1966. Special thanks to Landsteiner!
 
 
-# Installation:
+## Installation:
 
-TEXA requires [Go Lang](https://golang.org/)  v1.7+ to run.
+### Go:
+
+TEXA is written in [Go](http://golang.org) v1.7+. If you don't have a Go
+development environment, please [set one up](http://golang.org/doc/code.html).
+
+### Redis: 
+
+TEXA uses Redis to store all the mathematical data used by the texalib package, depended by the TEXA API. You can [install redis](https://redis.io/topics/quickstart#redis-quick-start) and learn more about redis [here](https://redis.io/).
+
+### MongoDB:
+
+TEXA persists all your chat history in a local MongoDB instance, keeping your interrogation data private. You can install [MongoDB](https://docs.mongodb.com/manual/installation) and learn more about MongoDB [here](https://docs.mongodb.com/manual/tutorial/getting-started).
 
 Check your version using the command:
 ```sh
@@ -55,7 +72,7 @@ When the results are posted on IPFS and committed to the Ethereum blockchain, yo
 ![texa-results-ipfs-blockchain](images/texa-session-ipld-etherscan-result-links.jpg)
 These links are valid and remain useful until public IPFS and ethereum kovan testnet exists. This is a small demonstration of how AI and its testing process could be democratized using blockchain and other decentralized technologies.
 
-### TODO (Future Work)
+## TODO (Future Work)
 
 - Needs testing
 - Lacks complete support for non-Eliza AIs(non-JS reference implementations through APIs).
