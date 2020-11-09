@@ -1,6 +1,7 @@
 # Turing test EXtended Architecture (TEXA): A method for interacting, evaluating and assessing AI in a multi-context environment
 
 [![CodeFactor](https://www.codefactor.io/repository/github/texaproject/texa/badge)](https://www.codefactor.io/repository/github/texaproject/texa)
+[![Build Status](https://travis-ci.org/TexaProject/texa.svg?branch=master)](https://travis-ci.org/TexaProject/texa)
 
 TEXA is a novel testing and benchmarking framework backed by a simple [mathematical theory](https://github.com/TexaProject/texa-docs). It can be used to interact, evaluate and assess AIs that work in multi-context environments. 
 
