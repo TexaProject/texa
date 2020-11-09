@@ -17,6 +17,10 @@
     SlabNum = "";
     while (SlabNum == "" || SlabNum == null || SlabNum == 0) {
       SlabNum = prompt("Enter number of Slabs:", "");
+      if (isNaN(SlabNum) == true) {
+        alert("Please enter a valid Number")
+        SlabNum = null
+      }
     }
     alert("Slab Count: " + SlabNum)
 
@@ -67,6 +71,7 @@
     var scoreArray = [];
     var jsonString = "";
     var slabSequence = [];
+    var justificationSeq = [];
 
     // elizaReset() resets all forms and associated values
     function elizaReset() {
@@ -101,13 +106,15 @@
           if (l >= displayRows) break
           else temp.push(elizaLines[i]);
         }
-        elizaLines = temp.reverse();
-        f.e_display.value = elizaLines.join('\n');
+        f.e_display.value = temp.reverse().join('\n')
       } else if (elizaLines.length == 0) {
         // no input and no saved lines -> output initial
         var initial = 'ELIZA: ' + eliza.getInitial();
         elizaLines.push(initial);
         f.e_display.value = initial + '\n';
+      }
+      if (userinput != "") {
+        collectScore()
       }
       f.e_input.value = '';
       f.e_input.focus();
@@ -139,11 +146,29 @@
       var f = document.forms.e_form;
       var score = f.gender.value;
       var counter = scoreArray.length;
+      var jstfctn = f.j_input.value;
 
-      if ((score != null) && (f.e_input.value != '')) {
+      if (score != null) {
+        if ((score == 0) && jstfctn == "") {
+          while (jstfctn == "") {
+            jstfctn = prompt("Enter justification for Quantum score : 0 :", "");
+            f.j_input.value = jstfctn
+            if (jstfctn == null) {
+              // if cancelled , user may want to change quantom score or reply
+              f.e_input.value = "";
+              return false
+            }
+          }
+        }
+
+        if (score == 1 && jstfctn == "") {
+          jstfctn = "Satisfied"
+        }
+
         if (((score == 0) || (score == 1)) && (validateSlabButtons() == true)) {
           scoreArray[counter] = score;
           slabSequence[counter] = getSlabValue();
+          justificationSeq[counter] = jstfctn
           counter = counter + 1;
         } else {
           alert("Please choose your score: 0 or 1.\nPlease choose a Slab.");
@@ -155,16 +180,24 @@
 
       alert("ScoreArray: " + scoreArray);
       alert("SlabSequence: " + slabSequence);
+      alert("quantomscore: " + score + "\n" + "justification: " + jstfctn)
+      alert("justificationSeq:" + "\n" + justificationSeq.join("\n"))
+      alert("Transactions:" + "\n" + elizaLines.join("\n"))
 
       $('#slabSequence').val(slabSequence);
       $('#scoreArray').val(scoreArray);
       $('#IntName').val(IntName);
       $('#SlabName').val(SlabName);
+      $('#justificationSeq').val(justificationSeq.join("\n"));
+      $('#elizaLines').val(elizaLines.join("\n"));
+
+      f.j_input.value = ""
     }
   </SCRIPT>
 </HEAD>
 
-<BODY TOPMARGIN="0" LEFTMARGIN="0" RIGHTMARGIN="0" BOTTOMMARGIN="0" MARGINHEIGHT="0" MARGINWIDTH="0" STYLE="border:0" onload="window.setTimeout('elizaReset()',100)">
+<BODY TOPMARGIN="0" LEFTMARGIN="0" RIGHTMARGIN="0" BOTTOMMARGIN="0" MARGINHEIGHT="0" MARGINWIDTH="0" STYLE="border:0"
+  onload="window.setTimeout('elizaReset()',100)">
   <A NAME="top"></A>
 
   <CENTER>
@@ -183,7 +216,9 @@
             Quantum Score:
             <INPUT TYPE="radio" NAME="gender" value="0" checked>0
             <INPUT TYPE="radio" NAME="gender" value="1">1
-            <br/><br/>Dialog Input:
+            <br />Justification:
+            <INPUT TYPE="text" NAME="j_input" SIZE="50">
+            <br /><br />Dialog Input:
             <INPUT TYPE="text" NAME="e_input" SIZE="50">
             <script>
               radio_home = document.getElementById("radio_home")
@@ -191,20 +226,24 @@
             </script>
           </TD>
           <TD ALIGN="right">
-            <INPUT TYPE="submit" VALUE="&nbsp;Talk&nbsp;" onclick="collectScore()">
-            <br/><br/>
+            <!-- <INPUT TYPE="submit" VALUE="&nbsp;Talk&nbsp;" onclick="collectScore()"> -->
+            <INPUT TYPE="submit" VALUE="&nbsp;Talk&nbsp;" onclick="">
+            <br /><br />
             <INPUT TYPE="reset" VALUE="Reset" onClick="window.setTimeout('elizaReset()',100)">
           </TD>
         </TR>
       </FORM>
     </TABLE>
   </CENTER>
-  <FORM ACTION="/texa" NAME="e_score" method="POST">
+  <FORM ACTION="/texa" NAME="e_score" method="POST" onsubmit="collectScore()">
     <input type="hidden" id="scoreArray" name="scoreArray">
     <input type="hidden" id="IntName" name="IntName">
     <input type="hidden" id="SlabName" name="SlabName">
     <input type="hidden" id="slabSequence" name="slabSequence">
-    <br />><center><input type="submit" value="Submit Score"></center>
+    <input type="hidden" id="elizaLines" name="elizaLines">
+    <input type="hidden" id="justificationSeq" name="justificationSeq">
+    <br />
+    <center><input type="submit" value="Submit Score"></center>
   </FORM>
 </BODY>
 

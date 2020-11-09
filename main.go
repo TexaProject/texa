@@ -5,6 +5,7 @@ import (
 	"crypto/ecdsa"
 	"crypto/md5"
 	"encoding/json"
+	"flag"
 	"io/ioutil"
 	"log"
 	"math/big"
@@ -70,12 +71,19 @@ func texaHandler(w http.ResponseWriter, r *http.Request) {
 		QSA := r.Form.Get("scoreArray")
 		SlabName := r.Form.Get("SlabName")
 		slabSequence := r.Form.Get("slabSequence")
+		justificationSequence := r.Form.Get("justificationSeq")
+		transactionLines := r.Form.Get("elizaLines")
 
+		if AIName == "" {
+			AIName = "unknown"
+		}
 		fmt.Println("###", AIName)
 		fmt.Println("###", IntName)
 		fmt.Println("###", QSA)
 		fmt.Println("###", SlabName)
 		fmt.Println("###", slabSequence)
+		fmt.Println("###", justificationSequence)
+		fmt.Println("###", transactionLines)
 
 		// LOGIC
 		re := regexp.MustCompile("[0-1]+")
@@ -83,6 +91,9 @@ func texaHandler(w http.ResponseWriter, r *http.Request) {
 
 		SlabNameArray := regexp.MustCompile("[,]").Split(SlabName, -1)
 		slabSeqArray := regexp.MustCompile("[,]").Split(slabSequence, -1)
+
+		justificationSeqArray := regexp.MustCompile("[\n]").Split(justificationSequence, -1)
+		transactionSeqArray := regexp.MustCompile("[\n]").Split(transactionLines, -1)
 
 		fmt.Println("###Resulting Array:")
 		for x := range array {
@@ -94,6 +105,12 @@ func texaHandler(w http.ResponseWriter, r *http.Request) {
 
 		fmt.Println("###slabSeqArray: ")
 		fmt.Println(slabSeqArray)
+
+		fmt.Println("###justificationSeqArray: ")
+		fmt.Println(justificationSeqArray)
+
+		fmt.Println("###transactionSeqArray: ")
+		fmt.Println(transactionSeqArray)
 
 		ArtiQSA := texalib.Convert(array)
 		fmt.Println("###ArtiQSA:")
@@ -137,7 +154,7 @@ func texaHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("###slabPageArray")
 		fmt.Println(slabPageArray)
 
-		slabPages := texajson.ConvtoSlabPage(ArtiQSA, SlabNameArray, slabSeqArray)
+		slabPages := texajson.ConvtoSlabPage(ArtiQSA, SlabNameArray, slabSeqArray, justificationSeqArray, transactionSeqArray)
 		fmt.Println("###slabPages")
 		fmt.Println(slabPages)
 		for z := 0; z < len(slabPages); z++ {
@@ -182,6 +199,12 @@ func texaHandler(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("Successfully wrote the session data to IPFS at ", cid)
 		}
 
+		pin, err := texajson.GetInstance().PinCid(cid)
+		if err != nil {
+			log.Println("Pining failed for Cid:", cid, " error :", err)
+		} else {
+			fmt.Println("CID is successfully pinned : ", pin)
+		}
 		configData := GetConfigData()
 		tx := SubmitTxnToBlockchain(configData, AIName, cid)
 
@@ -341,6 +364,13 @@ func getSlabJSON(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+
+	host := flag.String("host", "localhost", "identifier for ipfs cluster")
+	port := flag.String("port", "9094", "port number of ipfs cluster")
+
+	flag.Parse()
+	texajson.InitCluster(*host, *port)
+
 	fmt.Println("--TEXA SERVER--")
 	fmt.Println("STATUS: INITIATED")
 	fmt.Println("ADDR: http://127.0.0.1:3030")
