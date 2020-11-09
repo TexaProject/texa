@@ -365,8 +365,8 @@ func getSlabJSON(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 
-	host := flag.String("host", "localhost", "identifier for ipfs and ipfs cluster")
-	port := flag.String("port", "9094", "Source port number")
+	host := flag.String("host", "localhost", "identifier for ipfs cluster")
+	port := flag.String("port", "9094", "port number of ipfs cluster")
 
 	flag.Parse()
 	texajson.InitCluster(*host, *port)
