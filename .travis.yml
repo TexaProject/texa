@@ -1,8 +1,11 @@
 language: go
-go:
-  - "1.13"
 
-sudo: false
+os: linux
+
+dist: xenial
+
+go:
+  - "1.13 "
 
 script:
   - go build
