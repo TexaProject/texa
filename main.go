@@ -143,9 +143,9 @@ func texaHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("###AddedPageArray")
 		fmt.Println(PageArray)
 
-		JsonPageArray := texajson.ToJson(PageArray)
+		JSONPageArray := texajson.ToJson(PageArray)
 		fmt.Println("###jsonPageArray:")
-		fmt.Println(JsonPageArray)
+		fmt.Println(JSONPageArray)
 
 		////
 		fmt.Println("### SLAB LOGIC")
@@ -163,9 +163,9 @@ func texaHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("###finalslabPageArray")
 		fmt.Println(slabPageArray)
 
-		JsonSlabPageArray := texajson.SlabToJson(slabPageArray)
+		JSONSlabPageArray := texajson.SlabToJson(slabPageArray)
 		fmt.Println("###JsonSlabPageArray: ")
-		fmt.Println(JsonSlabPageArray)
+		fmt.Println(JSONSlabPageArray)
 
 		////
 		fmt.Println("### CAT LOGIC")
@@ -182,9 +182,9 @@ func texaHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("###finalCatPageArray")
 		fmt.Println(CatPageArray)
 
-		JsonCatPageArray := texajson.CatToJson(CatPageArray)
+		JSONCatPageArray := texajson.CatToJson(CatPageArray)
 		fmt.Println("###JsonCatPageArray: ")
-		fmt.Println(JsonCatPageArray)
+		fmt.Println(JSONCatPageArray)
 
 		ResultObject := texajson.NewResultObject(AIName)
 
