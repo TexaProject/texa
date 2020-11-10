@@ -5,7 +5,7 @@ os: linux
 dist: xenial
 
 go:
-  - "1.13 "
+  - "1.13"
 
 script:
   - go build
